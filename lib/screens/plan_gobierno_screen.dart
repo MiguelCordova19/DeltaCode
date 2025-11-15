@@ -267,14 +267,46 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
   }
 
   Widget _buildPartidoCard(PartidoPolitico partido) {
-    final hasPlan = PlanGobierno.hasPlan(partido.id);
+    final plan = PlanGobierno.getPlanByPartidoId(partido.id);
+    
+    // Determinar el estado del plan
+    String estadoTexto;
+    IconData estadoIcono;
+    Color estadoColor;
+    
+    if (plan == null) {
+      estadoTexto = 'Sin información';
+      estadoIcono = Icons.error_outline;
+      estadoColor = Colors.red;
+    } else {
+      switch (plan.estadoPlan) {
+        case 'completo':
+          estadoTexto = 'Plan 2026 disponible';
+          estadoIcono = Icons.check_circle;
+          estadoColor = Colors.green;
+          break;
+        case 'antiguo':
+          estadoTexto = 'Plan desactualizado';
+          estadoIcono = Icons.history;
+          estadoColor = Colors.orange;
+          break;
+        case 'incompleto':
+          estadoTexto = 'Información parcial';
+          estadoIcono = Icons.info_outline;
+          estadoColor = Colors.amber;
+          break;
+        default:
+          estadoTexto = 'Plan en proceso';
+          estadoIcono = Icons.info_outline;
+          estadoColor = Colors.grey;
+      }
+    }
     
     return GestureDetector(
       onTap: () {
         setState(() {
           _selectedPartido = partido;
-          _planGobierno = PlanGobierno.getPlanByPartidoId(partido.id) ??
-              PlanGobierno.getDefaultPlan(partido.id, partido.nombre);
+          _planGobierno = plan ?? PlanGobierno.getDefaultPlan(partido.id, partido.nombre);
           _categories = _planGobierno!.getCategorias();
           _selectedCategoryIndex = 0;
         });
@@ -330,17 +362,20 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                   Row(
                     children: [
                       Icon(
-                        hasPlan ? Icons.check_circle : Icons.info_outline,
+                        estadoIcono,
                         size: 14,
-                        color: hasPlan ? Colors.green : Colors.orange,
+                        color: estadoColor,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        hasPlan ? 'Plan disponible' : 'Plan en proceso',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: hasPlan ? Colors.green[700] : Colors.orange[700],
-                          fontWeight: FontWeight.w500,
+                      Flexible(
+                        child: Text(
+                          estadoTexto,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: estadoColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -499,25 +534,44 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
               : const SizedBox.shrink(),
         ),
 
-        // Advertencia si el plan no es del 2026
-        if (_planGobierno != null && !_planGobierno!.esActual)
+        // Advertencia según el estado del plan
+        if (_planGobierno != null && _planGobierno!.estadoPlan != 'completo')
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.orange[50],
+              color: _planGobierno!.estadoPlan == 'antiguo' 
+                  ? Colors.orange[50] 
+                  : Colors.amber[50],
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.orange[200]!),
+              border: Border.all(
+                color: _planGobierno!.estadoPlan == 'antiguo'
+                    ? Colors.orange[200]!
+                    : Colors.amber[200]!,
+              ),
             ),
             child: Row(
               children: [
-                Icon(Icons.info_outline, color: Colors.orange[700], size: 20),
+                Icon(
+                  _planGobierno!.estadoPlan == 'antiguo' 
+                      ? Icons.history 
+                      : Icons.info_outline,
+                  color: _planGobierno!.estadoPlan == 'antiguo'
+                      ? Colors.orange[700]
+                      : Colors.amber[700],
+                  size: 20,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    _planGobierno!.mensajeAdvertencia ?? '',
+                    _planGobierno!.mensajeAdvertencia ?? 
+                        (_planGobierno!.estadoPlan == 'antiguo'
+                            ? 'Este plan corresponde a ${_planGobierno!.anio} - ${_planGobierno!.ambito}. Plan nacional 2026 en proceso de carga.'
+                            : 'Este partido aún no ha publicado su plan de gobierno completo para 2026.'),
                     style: TextStyle(
-                      color: Colors.orange[900],
+                      color: _planGobierno!.estadoPlan == 'antiguo'
+                          ? Colors.orange[900]
+                          : Colors.amber[900],
                       fontSize: 13,
                     ),
                   ),

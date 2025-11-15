@@ -18,9 +18,38 @@ class PlanGobierno {
   // Verificar si el plan es del año actual (2026)
   bool get esActual => anio == '2026' || anio == null;
 
+  // Verificar si el plan tiene información completa
+  bool get esCompleto {
+    // Si tiene nota que indica "en proceso de carga", no está completo
+    if (nota != null && nota!.contains('en proceso de carga')) {
+      return false;
+    }
+    
+    // Verificar si todas las categorías tienen información real
+    for (var propuestas in categorias.values) {
+      if (propuestas.isEmpty) return false;
+      // Si todas las propuestas dicen "Información no disponible", no está completo
+      if (propuestas.every((p) => p.contains('Información no disponible'))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Obtener el estado del plan
+  String get estadoPlan {
+    if (!esActual) {
+      return 'antiguo'; // Plan de años anteriores o ámbito regional/municipal
+    }
+    if (!esCompleto) {
+      return 'incompleto'; // Plan 2026 pero sin información completa
+    }
+    return 'completo'; // Plan 2026 con información completa
+  }
+
   // Obtener mensaje de advertencia si no es actual
   String? get mensajeAdvertencia {
-    if (esActual) return null;
+    if (esActual && esCompleto) return null;
     return nota ?? 'Plan de gobierno de $anio. Plan 2026 en proceso de carga.';
   }
 

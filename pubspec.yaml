@@ -43,6 +43,8 @@ dependencies:
   url_launcher: ^6.2.1
   webview_flutter: ^4.4.2
   google_generative_ai: ^0.2.2
+  youtube_player_flutter: ^9.0.3
+  table_calendar: ^3.0.9
 
 dev_dependencies:
   flutter_test:

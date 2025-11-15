@@ -243,6 +243,7 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF7C4DFF),
         foregroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

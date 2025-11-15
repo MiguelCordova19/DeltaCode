@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'login_screen.dart';
-import 'home_screen.dart';
+import 'main_navigation_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => hasSession 
-              ? const HomeScreen() 
+              ? const MainNavigationScreen() 
               : const LoginScreen(),
         ),
       );
