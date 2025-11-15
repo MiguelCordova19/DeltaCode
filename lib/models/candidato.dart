@@ -1,9 +1,10 @@
 class Candidato {
   final String nombre;
-  final String cargo; // 'Representante Legal', 'Presidente', 'Vicepresidente 1', 'Vicepresidente 2'
+  final String cargo; // 'Representante Legal', 'Presidente', 'Vicepresidente 1', 'Vicepresidente 2', etc.
   final String fotoPath;
   final String hojaVida;
   final String biografia;
+  final int? orden; // Para ordenar múltiples candidatos del mismo cargo
 
   Candidato({
     required this.nombre,
@@ -11,63 +12,188 @@ class Candidato {
     required this.fotoPath,
     required this.hojaVida,
     required this.biografia,
+    this.orden,
   });
 
-  // Datos de ejemplo con Lorem Ipsum
+  // Helper para generar el nombre del archivo de foto
+  static String getFotoPath(String partidoId, String cargo, {int? numero}) {
+    String cargoKey;
+    switch (cargo.toLowerCase()) {
+      case 'representante legal':
+        cargoKey = 'representante';
+        break;
+      case 'presidente':
+        cargoKey = 'presidente';
+        break;
+      case 'vicepresidente 1':
+      case 'primer vicepresidente':
+        cargoKey = 'vice1';
+        break;
+      case 'vicepresidente 2':
+      case 'segundo vicepresidente':
+        cargoKey = 'vice2';
+        break;
+      case 'vicepresidente 3':
+      case 'tercer vicepresidente':
+        cargoKey = 'vice3';
+        break;
+      default:
+        cargoKey = cargo.toLowerCase().replaceAll(' ', '_');
+    }
+    
+    // Si hay número mayor a 1, agregarlo con guión bajo
+    if (numero != null && numero > 1) {
+      return 'assets/images/candidatos/${partidoId}_${cargoKey}_$numero.png';
+    }
+    
+    return 'assets/images/candidatos/${partidoId}_$cargoKey.png';
+  }
+
+  // Datos de candidatos por partido
+  // Este método genera automáticamente candidatos basándose en los cargos estándar
+  // Solo necesitas agregar las fotos con el nombre correcto
   static List<Candidato> getCandidatosPorPartido(String partidoId) {
+    List<Candidato> candidatos = [];
+    
+    // Definir todos los cargos posibles a verificar
+    final cargosConfig = [
+      {
+        'cargo': 'Representante Legal',
+        'titulo': 'Representante Legal',
+        'hojaVida': '• Abogado especializado en derecho electoral\n• Secretario General del Partido',
+        'biografia': 'Representante legal del partido político.',
+      },
+      {
+        'cargo': 'Presidente',
+        'titulo': 'Candidato a Presidente',
+        'hojaVida': '• Economista con maestría en políticas públicas\n• Ex Ministro de Economía',
+        'biografia': 'Candidato a la presidencia de la república.',
+      },
+      {
+        'cargo': 'Vicepresidente 1',
+        'titulo': 'Primer Vicepresidente',
+        'hojaVida': '• Profesional con experiencia en gestión pública',
+        'biografia': 'Candidato a primer vicepresidente.',
+      },
+      {
+        'cargo': 'Vicepresidente 2',
+        'titulo': 'Segundo Vicepresidente',
+        'hojaVida': '• Ingeniero con MBA\n• Ex Ministro de Transportes',
+        'biografia': 'Candidato a segundo vicepresidente.',
+      },
+    ];
+    
+    // Para cada cargo, agregar el candidato base
+    for (var config in cargosConfig) {
+      candidatos.add(Candidato(
+        nombre: config['titulo'] as String,
+        cargo: config['cargo'] as String,
+        fotoPath: getFotoPath(partidoId, config['cargo'] as String),
+        hojaVida: config['hojaVida'] as String,
+        biografia: config['biografia'] as String,
+        orden: 1,
+      ));
+    }
+    
+    // Verificar si hay múltiples candidatos del mismo cargo (vice1_1, vice1_2, etc.)
+    // Para Vicepresidente 1
+    for (int i = 2; i <= 5; i++) {
+      candidatos.add(Candidato(
+        nombre: 'Primer Vicepresidente $i',
+        cargo: 'Vicepresidente 1',
+        fotoPath: getFotoPath(partidoId, 'Vicepresidente 1', numero: i),
+        hojaVida: '• Profesional con experiencia en gestión pública',
+        biografia: 'Candidato a primer vicepresidente.',
+        orden: i,
+      ));
+    }
+    
+    // Para Vicepresidente 2
+    for (int i = 2; i <= 5; i++) {
+      candidatos.add(Candidato(
+        nombre: 'Segundo Vicepresidente $i',
+        cargo: 'Vicepresidente 2',
+        fotoPath: getFotoPath(partidoId, 'Vicepresidente 2', numero: i),
+        hojaVida: '• Ingeniero con MBA\n• Ex Ministro de Transportes',
+        biografia: 'Candidato a segundo vicepresidente.',
+        orden: i,
+      ));
+    }
+    
+    return candidatos;
+  }
+
+  // Ejemplo con múltiples candidatos del mismo cargo
+  static List<Candidato> getCandidatosConMultiples(String partidoId) {
     return [
+      // Representante Legal
       Candidato(
         nombre: 'Roberto Martínez Flores',
         cargo: 'Representante Legal',
-        fotoPath: 'assets/images/candidatos/${partidoId}_representante.png',
-        hojaVida: '''
-• Abogado, Universidad Nacional Mayor de San Marcos
-• Especialización en Derecho Electoral, Universidad de Salamanca
-• Secretario General del Partido (2020-2024)
-• Asesor Legal del Congreso (2015-2019)
-• 18 años de experiencia en derecho político
-        ''',
-        biografia: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper.',
+        fotoPath: getFotoPath(partidoId, 'Representante Legal'),
+        hojaVida: '• Abogado especializado en derecho electoral',
+        biografia: 'Representante legal del partido.',
+        orden: 1,
       ),
+      
+      // Presidente
       Candidato(
         nombre: 'Juan Pérez García',
         cargo: 'Presidente',
-        fotoPath: 'assets/images/candidatos/${partidoId}_presidente.png',
-        hojaVida: '''
-• Economista, Universidad Nacional Mayor de San Marcos
-• Maestría en Políticas Públicas, Harvard University
-• Ex Ministro de Economía (2018-2020)
-• Congresista de la República (2016-2018)
-• 25 años de experiencia en sector público
-        ''',
-        biografia: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+        fotoPath: getFotoPath(partidoId, 'Presidente'),
+        hojaVida: '• Economista con maestría en políticas públicas',
+        biografia: 'Candidato a la presidencia.',
+        orden: 1,
       ),
+      
+      // Primer Vicepresidente
       Candidato(
         nombre: 'María López Sánchez',
         cargo: 'Vicepresidente 1',
-        fotoPath: 'assets/images/candidatos/${partidoId}_vice1.png',
-        hojaVida: '''
-• Abogada, Pontificia Universidad Católica del Perú
-• Especialización en Derechos Humanos, ONU
-• Ex Ministra de la Mujer (2019-2021)
-• Defensora del Pueblo (2015-2018)
-• 20 años de experiencia en defensa de derechos
-        ''',
-        biografia: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.',
+        fotoPath: getFotoPath(partidoId, 'Vicepresidente 1'),
+        hojaVida: '• Abogada especializada en derechos humanos',
+        biografia: 'Primera vicepresidenta.',
+        orden: 1,
       ),
+      
+      // Segundo Vicepresidente
       Candidato(
         nombre: 'Carlos Rodríguez Torres',
         cargo: 'Vicepresidente 2',
-        fotoPath: 'assets/images/candidatos/${partidoId}_vice2.png',
-        hojaVida: '''
-• Ingeniero Civil, Universidad Nacional de Ingeniería
-• MBA, ESAN Graduate School of Business
-• Ex Ministro de Transportes (2017-2019)
-• Gerente General de Construcciones SAC
-• 30 años de experiencia en infraestructura
-        ''',
-        biografia: 'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi.',
+        fotoPath: getFotoPath(partidoId, 'Vicepresidente 2'),
+        hojaVida: '• Ingeniero Civil con MBA',
+        biografia: 'Segundo vicepresidente.',
+        orden: 1,
+      ),
+      
+      // Tercer Vicepresidente (ejemplo adicional)
+      Candidato(
+        nombre: 'Ana Fernández Ruiz',
+        cargo: 'Vicepresidente 3',
+        fotoPath: getFotoPath(partidoId, 'Vicepresidente 3'),
+        hojaVida: '• Médica especialista en salud pública',
+        biografia: 'Tercera vicepresidenta.',
+        orden: 1,
       ),
     ];
+  }
+
+  // Agrupar candidatos por cargo
+  static Map<String, List<Candidato>> agruparPorCargo(List<Candidato> candidatos) {
+    final Map<String, List<Candidato>> grupos = {};
+    
+    for (var candidato in candidatos) {
+      if (!grupos.containsKey(candidato.cargo)) {
+        grupos[candidato.cargo] = [];
+      }
+      grupos[candidato.cargo]!.add(candidato);
+    }
+    
+    // Ordenar cada grupo por el campo 'orden'
+    grupos.forEach((cargo, lista) {
+      lista.sort((a, b) => (a.orden ?? 0).compareTo(b.orden ?? 0));
+    });
+    
+    return grupos;
   }
 }

@@ -1,0 +1,22 @@
+{
+  "accion_popular": {
+    "candidatos": [
+      {
+        "cargo": "Representante Legal",
+        "nombre": "Representante Legal - Acción Popular",
+        "hojaVida": "• Abogado especializado en derecho electoral\n• Secretario General del Partido",
+        "biografia": "Representante legal del partido político Acción Popular.",
+        "orden": 1
+      }
+    ]
+  },
+  "fuerza_popular": {
+    "candidatos": []
+  },
+  "pte_peru": {
+    "candidatos": []
+  },
+  "partido_morado": {
+    "candidatos": []
+  }
+}

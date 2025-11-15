@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/info_card.dart';
-import '../widgets/menu_button.dart';
 import '../services/auth_service.dart';
+import '../services/usuario_service.dart';
+import '../models/usuario.dart';
 import 'plan_gobierno_screen.dart';
 import 'miembros_mesa_screen.dart';
 import 'candidatos_screen.dart';
@@ -9,6 +9,7 @@ import 'login_screen.dart';
 import 'noticias_screen.dart';
 import 'locales_votacion_screen.dart';
 import 'informacion_electoral_screen.dart';
+import 'calendario_electoral_screen.dart';
 
 class HomeScreenContent extends StatefulWidget {
   const HomeScreenContent({super.key});
@@ -19,250 +20,322 @@ class HomeScreenContent extends StatefulWidget {
 
 class _HomeScreenContentState extends State<HomeScreenContent> {
   final AuthService _authService = AuthService();
+  final UsuarioService _usuarioService = UsuarioService();
+  Usuario? _usuario;
+  bool _isLoading = true;
 
-  Future<void> _handleLogout() async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Cerrar Sesión'),
-        content: const Text('¿Estás seguro que deseas cerrar sesión?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Cerrar Sesión'),
-          ),
-        ],
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    _cargarDatos();
+  }
 
-    if (confirm == true && mounted) {
-      await _authService.logout();
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-        (route) => false,
-      );
+  Future<void> _cargarDatos() async {
+    final usuario = await _usuarioService.obtenerUsuario();
+    if (usuario != null && mounted) {
+      setState(() {
+        _usuario = usuario;
+        _isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.red),
-            onPressed: _handleLogout,
-            tooltip: 'Cerrar sesión',
-          ),
-        ],
-      ),
+      backgroundColor: Colors.white, // Fondo blanco
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF7C4DFF),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.how_to_vote,
-                        color: Colors.white,
-                        size: 28,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Elecciones 2026',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // Subtitle
-                const Text(
-                  'Tu guía electoral inteligente',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+        child: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Color(0xFFE53935), // Rojo
                   ),
                 ),
-                const SizedBox(height: 24),
-
-                // Location Card
-                InfoCard(
-                  icon: Icons.location_on,
-                  title: 'Elecciones',
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
-                      _buildInfoRow('INE:', '12345678'),
-                      _buildInfoRow('Local:', 'Col. San Juan'),
-                      _buildInfoRow('Dirección:', 'Av. Principal #123'),
-                      _buildInfoRow('Mesa:', '058'),
-                      const SizedBox(height: 12),
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const LocalesVotacionScreen(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.map, size: 18),
-                        label: const Text('Ver en Mapa'),
-                        style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF7C4DFF),
+              )
+            : CustomScrollView(
+                slivers: [
+                  // App Bar con gradiente rojo
+                  SliverAppBar(
+                    expandedHeight: 120,
+                    floating: false,
+                    pinned: true,
+                    backgroundColor: const Color(0xFFE53935),
+                    elevation: 0,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFFE53935), // Rojo principal
+                              Color(0xFFEF5350), // Rojo más claro
+                            ],
+                          ),
                         ),
+                      ),
+                      titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+                      title: const Text(
+                        'Descubre',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.notifications_outlined,
+                            color: Colors.white),
+                        onPressed: () {},
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 24),
 
-                // Menu Grid
-                GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 1.1,
-                  children: [
-                    MenuButton(
-                      icon: Icons.description,
-                      label: 'Planes de Gobierno',
-                      color: const Color(0xFF7C4DFF),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PlanGobiernoScreen(),
-                          ),
-                        );
-                      },
+                  // Contenido en grid
+                  SliverPadding(
+                    padding: const EdgeInsets.all(20),
+                    sliver: SliverGrid(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        childAspectRatio: 0.85,
+                      ),
+                      delegate: SliverChildListDelegate([
+                        _buildDiscoveryCard(
+                          icon: Icons.description_outlined,
+                          title: 'Planes de\nGobierno',
+                          subtitle: '43 Partidos',
+                          color: Colors.white, // Blanco
+                          iconColor: const Color(0xFFD32F2F), // Rojo
+                          textColor: Colors.black87,
+                          destination: const PlanGobiernoScreen(),
+                        ),
+                        _buildDiscoveryCard(
+                          icon: Icons.people_outline,
+                          title: 'Candidatos',
+                          subtitle: 'Conoce sus propuestas',
+                          color: Colors.white, // Blanco
+                          iconColor: const Color(0xFFD32F2F), // Rojo
+                          textColor: Colors.black87,
+                          destination: const CandidatosScreen(),
+                        ),
+                        _buildDiscoveryCard(
+                          icon: Icons.how_to_vote_outlined,
+                          title: 'Miembros\nde Mesa',
+                          subtitle: 'Información importante',
+                          color: Colors.white, // Blanco
+                          iconColor: const Color(0xFFD32F2F), // Rojo
+                          textColor: Colors.black87,
+                          destination: const MiembrosMesaScreen(),
+                        ),
+                        _buildDiscoveryCard(
+                          icon: Icons.location_on_outlined,
+                          title: 'Mi Local',
+                          subtitle: 'Encuentra tu local',
+                          color: const Color(0xFFD32F2F), // Rojo destacado
+                          iconColor: Colors.white,
+                          textColor: Colors.white,
+                          isHighlighted: true,
+                          destination: const LocalesVotacionScreen(),
+                        ),
+                        _buildDiscoveryCard(
+                          icon: Icons.calendar_month_outlined,
+                          title: 'Calendario\nElectoral',
+                          subtitle: 'Fechas importantes',
+                          color: Colors.white, // Blanco
+                          iconColor: const Color(0xFFD32F2F), // Rojo
+                          textColor: Colors.black87,
+                          destination: const CalendarioElectoralScreen(),
+                        ),
+                        _buildDiscoveryCard(
+                          icon: Icons.newspaper_outlined,
+                          title: 'Noticias',
+                          subtitle: 'Últimas actualizaciones',
+                          color: Colors.white, // Blanco
+                          iconColor: const Color(0xFFD32F2F), // Rojo
+                          textColor: Colors.black87,
+                          destination: const NoticiasScreen(),
+                        ),
+                      ]),
                     ),
-                    MenuButton(
-                      icon: Icons.people,
-                      label: 'Miembros de Mesa',
-                      color: const Color(0xFF7C4DFF),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MiembrosMesaScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    MenuButton(
-                      icon: Icons.person,
-                      label: 'Candidatos',
-                      color: const Color(0xFF7C4DFF),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CandidatosScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    MenuButton(
-                      icon: Icons.gavel,
-                      label: 'Debates',
-                      color: const Color(0xFF7C4DFF),
-                      onTap: () {},
-                    ),
-                    MenuButton(
-                      icon: Icons.newspaper,
-                      label: 'Noticias Electorales',
-                      color: const Color(0xFF7C4DFF),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const NoticiasScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    MenuButton(
-                      icon: Icons.info_outline,
-                      label: 'Información Electoral',
-                      color: const Color(0xFF4CAF50),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const InformacionElectoralScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
+                  ),
+                ],
+              ),
       ),
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
+  Widget _buildDiscoveryCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required Color iconColor,
+    required Widget destination,
+    Color textColor = Colors.black87,
+    bool isHighlighted = false,
+  }) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.8 + (0.2 * value),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          onTap: () async {
+            // Pequeña pausa para mostrar el efecto ripple
+            await Future.delayed(const Duration(milliseconds: 150));
+            
+            // Navegar con transición personalizada
+            if (mounted) {
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) {
+                    return destination;
+                  },
+                  transitionDuration: const Duration(milliseconds: 600),
+                  reverseTransitionDuration: const Duration(milliseconds: 400),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    // Animación de fade
+                    var fadeAnimation = Tween<double>(
+                      begin: 0.0,
+                      end: 1.0,
+                    ).animate(CurvedAnimation(
+                      parent: animation,
+                      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+                    ));
+                    
+                    // Animación de slide desde abajo
+                    var slideAnimation = Tween<Offset>(
+                      begin: const Offset(0.0, 0.15),
+                      end: Offset.zero,
+                    ).animate(CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutCubic,
+                    ));
+                    
+                    // Animación de escala
+                    var scaleAnimation = Tween<double>(
+                      begin: 0.92,
+                      end: 1.0,
+                    ).animate(CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutCubic,
+                    ));
+                    
+                    return FadeTransition(
+                      opacity: fadeAnimation,
+                      child: SlideTransition(
+                        position: slideAnimation,
+                        child: ScaleTransition(
+                          scale: scaleAnimation,
+                          child: child,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }
+          },
+          borderRadius: BorderRadius.circular(20),
+          splashColor: const Color(0xFFD32F2F).withOpacity(0.4), // Ripple rojo fuerte
+          highlightColor: const Color(0xFFD32F2F).withOpacity(0.3),
+          splashFactory: InkRipple.splashFactory, // Efecto circular
+          child: Ink(
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isHighlighted 
+                    ? const Color(0xFFD32F2F).withOpacity(0.8)
+                    : const Color(0xFFD32F2F).withOpacity(0.3), // Borde rojo
+                width: isHighlighted ? 2 : 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isHighlighted
+                      ? const Color(0xFFD32F2F).withOpacity(0.5)
+                      : const Color(0xFFD32F2F).withOpacity(0.15),
+                  blurRadius: isHighlighted ? 20 : 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Icono con animación
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 600),
+                    curve: Curves.elasticOut,
+                    builder: (context, value, child) {
+                      return Transform.scale(
+                        scale: value,
+                        child: child,
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isHighlighted
+                            ? Colors.white.withOpacity(0.2)
+                            : const Color(0xFFD32F2F).withOpacity(0.1), // Fondo rojo muy tenue
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: const Color(0xFFD32F2F).withOpacity(0.4), // Borde rojo
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Icon(
+                        icon,
+                        color: iconColor,
+                        size: 32,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  // Título
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  // Subtítulo
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: textColor.withOpacity(0.7),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(width: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black87,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -15,7 +15,7 @@ class MiembroMesaDetalleScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: const Text('Detalle Miembro de Mesa'),
         elevation: 0,
@@ -32,8 +32,8 @@ class MiembroMesaDetalleScreen extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xFF7C4DFF),
-                    const Color(0xFF7C4DFF).withOpacity(0.8),
+                    const Color(0xFFE53935),
+                    const Color(0xFFE53935).withOpacity(0.8),
                   ],
                 ),
               ),
@@ -48,7 +48,7 @@ class MiembroMesaDetalleScreen extends StatelessWidget {
                     child: Icon(
                       _getIconByCargo(miembro.cargo),
                       size: 48,
-                      color: const Color(0xFF7C4DFF),
+                      color: const Color(0xFFE53935),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -241,7 +241,7 @@ class MiembroMesaDetalleScreen extends StatelessWidget {
                       icon: const Icon(Icons.info),
                       label: const Text('Ver Derechos y Obligaciones'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF7C4DFF),
+                        backgroundColor: const Color(0xFFE53935),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -276,7 +276,7 @@ class MiembroMesaDetalleScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, color: const Color(0xFF7C4DFF), size: 20),
+              Icon(icon, color: const Color(0xFFE53935), size: 20),
               const SizedBox(width: 8),
               Text(
                 title,

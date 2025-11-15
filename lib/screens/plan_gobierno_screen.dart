@@ -18,7 +18,9 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
   PlanGobierno? _planGobierno;
   int _selectedCategoryIndex = 0;
   final List<PartidoPolitico> _partidos = PartidoPolitico.getPartidos();
+  List<PartidoPolitico> _filteredPartidos = [];
   List<String> _categories = [];
+  final TextEditingController _searchController = TextEditingController();
   
   // TTS
   final TtsServiceAdvanced _ttsService = TtsServiceAdvanced();
@@ -30,6 +32,7 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
   @override
   void initState() {
     super.initState();
+    _filteredPartidos = _partidos;
     _ttsService.initialize();
     
     _ttsService.onStateChanged = () {
@@ -45,14 +48,30 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
         });
       }
     };
+    
+    _searchController.addListener(_filterPartidos);
   }
 
   @override
   void dispose() {
+    _searchController.dispose();
     _ttsService.onStateChanged = null;
     _ttsService.onProgress = null;
     _ttsService.stop();
     super.dispose();
+  }
+
+  void _filterPartidos() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        _filteredPartidos = _partidos;
+      } else {
+        _filteredPartidos = _partidos.where((partido) {
+          return partido.nombre.toLowerCase().contains(query);
+        }).toList();
+      }
+    });
   }
 
   void _showConfigDialog() {
@@ -111,50 +130,46 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            if (_selectedPartido != null) {
-              _ttsService.stop();
-              setState(() {
-                _selectedPartido = null;
-              });
-            } else {
-              Navigator.pop(context);
-            }
-          },
-        ),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: const Color(0xFF7C4DFF),
-                borderRadius: BorderRadius.circular(8),
+      backgroundColor: Colors.white, // Fondo blanco
+      appBar: _selectedPartido != null
+          ? AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  _ttsService.stop();
+                  setState(() {
+                    _selectedPartido = null;
+                  });
+                },
               ),
-              child: const Icon(
-                Icons.how_to_vote,
-                color: Colors.white,
-                size: 20,
+              title: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF7C4DFF),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.how_to_vote,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Elecciones 2026',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              'Elecciones 2026',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        actions: _selectedPartido != null
-            ? [
+              actions: [
                 IconButton(
                   icon: const Icon(Icons.settings_voice),
                   color: const Color(0xFF7C4DFF),
@@ -175,9 +190,9 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                     onPressed: _stopReading,
                     tooltip: 'Detener lectura',
                   ),
-              ]
-            : null,
-      ),
+              ],
+            )
+          : null,
       body: _selectedPartido == null ? _buildPartidosList() : _buildPlanDetalle(),
       floatingActionButton: _selectedPartido != null
           ? AnimatedSwitcher(
@@ -222,47 +237,168 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                     ),
             )
           : null,
-      bottomNavigationBar: _buildBottomNav(context),
     );
   }
 
   Widget _buildPartidosList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Planes de Gobierno',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: Column(
+        children: [
+          // Header con gradiente rojo
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFE53935), // Rojo principal
+                  Color(0xFFEF5350), // Rojo más claro
+                ],
               ),
-              SizedBox(height: 8),
-              Text(
-                'Selecciona un partido para ver su plan',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
+            ),
+            child: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                // Barra superior con título
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const Expanded(
+                        child: Text(
+                          'Planes de Gobierno',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(width: 48), // Balance para el back button
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                // Barra de búsqueda
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(
+                        color: const Color(0xFFD32F2F).withOpacity(0.3),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFD32F2F).withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Buscar partido político...',
+                        hintStyle: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Color(0xFFD32F2F),
+                          size: 22,
+                        ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(
+                                  Icons.clear,
+                                  color: Color(0xFFD32F2F),
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  _searchController.clear();
+                                },
+                              )
+                            : null,
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+        // Lista de partidos
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: _partidos.length,
-            itemBuilder: (context, index) {
-              return _buildPartidoCard(_partidos[index]);
-            },
+          child: _filteredPartidos.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.search_off,
+                        size: 64,
+                        color: Colors.grey[400],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No se encontraron partidos',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : GridView.builder(
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemCount: _filteredPartidos.length,
+                  itemBuilder: (context, index) {
+                    return _buildPartidoCard(_filteredPartidos[index]);
+                  },
+                ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -302,105 +438,151 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
       }
     }
     
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedPartido = partido;
-          _planGobierno = plan ?? PlanGobierno.getDefaultPlan(partido.id, partido.nombre);
-          _categories = _planGobierno!.getCategorias();
-          _selectedCategoryIndex = 0;
-        });
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.grey[300]!,
-            width: 1,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedPartido = partido;
+            _planGobierno = plan ?? PlanGobierno.getDefaultPlan(partido.id, partido.nombre);
+            _categories = _planGobierno!.getCategorias();
+            _selectedCategoryIndex = 0;
+          });
+        },
+        borderRadius: BorderRadius.circular(20),
+        splashColor: const Color(0xFFD32F2F).withOpacity(0.3),
+        highlightColor: const Color(0xFFD32F2F).withOpacity(0.2),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: const Color(0xFFD32F2F).withOpacity(0.3),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFD32F2F).withOpacity(0.15),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // Logo del partido
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: _buildPartidoImage(partido.logoPath),
-              ),
-            ),
-            const SizedBox(width: 16),
-            // Nombre del partido
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    partido.nombre,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Logo del partido - Ocupa la mitad superior
+              Expanded(
+                flex: 3,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Row(
+                  padding: const EdgeInsets.all(20),
+                  child: _buildPartidoImage(partido.logoPath),
+                ),
+              ),
+              
+              // Información del partido
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        estadoIcono,
-                        size: 14,
-                        color: estadoColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          estadoTexto,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: estadoColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                      // Nombre del partido
+                      Text(
+                        partido.nombre,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2D2D2D),
+                          height: 1.2,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      
+                      // Estado del plan
+                      Row(
+                        children: [
+                          Icon(
+                            estadoIcono,
+                            size: 12,
+                            color: estadoColor,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              estadoTexto,
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: estadoColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-            // Icono de flecha
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey[400],
-              size: 28,
-            ),
-          ],
+              
+              // Botón "Ver Plan"
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFD32F2F), // Rojo
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                ),
+                child: const Text(
+                  'Ver Plan',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildPlanDetalle() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header con logo y nombre del partido
-        Container(
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header con logo y nombre del partido
+          Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: const Color(0xFF7C4DFF).withOpacity(0.05),
@@ -608,6 +790,7 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
           ),
         ),
       ],
+      ),
     );
   }
 

@@ -29,24 +29,37 @@ class TtsServiceAdvanced {
   double get progress => _words.isEmpty ? 0 : _currentWordIndex / _words.length;
 
   Future<void> initialize() async {
-    await applyConfig(_config);
-    await loadAvailableVoices();
+    try {
+      // Configurar handlers primero
+      _flutterTts.setStartHandler(() {
+        print('TTS: Palabra iniciada');
+      });
 
-    _flutterTts.setStartHandler(() {
-      print('TTS: Palabra iniciada');
-    });
+      _flutterTts.setCompletionHandler(() {
+        print('TTS: Palabra completada - $_currentWordIndex de ${_words.length}');
+        _onWordCompleted();
+      });
 
-    _flutterTts.setCompletionHandler(() {
-      print('TTS: Palabra completada - $_currentWordIndex de ${_words.length}');
-      _onWordCompleted();
-    });
+      _flutterTts.setErrorHandler((msg) {
+        print('TTS: Error - $msg');
+        _isPlaying = false;
+        _isPaused = false;
+        onStateChanged?.call();
+      });
 
-    _flutterTts.setErrorHandler((msg) {
-      print('TTS: Error - $msg');
-      _isPlaying = false;
-      _isPaused = false;
-      onStateChanged?.call();
-    });
+      // Esperar un momento para que el motor se vincule
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      // Aplicar configuración
+      await applyConfig(_config);
+      
+      // Cargar voces disponibles
+      await loadAvailableVoices();
+      
+      print('TTS: Inicialización completada');
+    } catch (e) {
+      print('TTS: Error en inicialización - $e');
+    }
   }
 
   Future<void> loadAvailableVoices() async {
@@ -77,17 +90,33 @@ class TtsServiceAdvanced {
   }
 
   Future<void> applyConfig(TtsConfig config) async {
-    _config = config;
-    await _flutterTts.setLanguage(config.language);
-    await _flutterTts.setSpeechRate(config.speechRate);
-    await _flutterTts.setVolume(config.volume);
-    await _flutterTts.setPitch(config.pitch);
-    
-    if (config.selectedVoice != null) {
-      await _flutterTts.setVoice({
-        "name": config.selectedVoice!,
-        "locale": config.language,
-      });
+    try {
+      _config = config;
+      
+      // Configurar idioma
+      final langResult = await _flutterTts.setLanguage(config.language);
+      print('TTS: Idioma configurado - $langResult');
+      
+      // Configurar parámetros
+      await _flutterTts.setSpeechRate(config.speechRate);
+      await _flutterTts.setVolume(config.volume);
+      await _flutterTts.setPitch(config.pitch);
+      
+      // Configurar voz específica si está seleccionada
+      if (config.selectedVoice != null) {
+        await _flutterTts.setVoice({
+          "name": config.selectedVoice!,
+          "locale": config.language,
+        });
+        print('TTS: Voz configurada - ${config.selectedVoice}');
+      }
+      
+      // Verificar que el motor esté listo
+      final engines = await _flutterTts.getEngines;
+      print('TTS: Motores disponibles - $engines');
+      
+    } catch (e) {
+      print('TTS: Error al aplicar configuración - $e');
     }
   }
 
@@ -99,8 +128,8 @@ class TtsServiceAdvanced {
   Future<void> speak(String text) async {
     if (text.isEmpty) return;
 
-    // Dividir en palabras (grupos de 3-5 palabras para mejor fluidez)
-    _words = _splitIntoWordGroups(text, wordsPerGroup: 5);
+    // Dividir en oraciones para lectura más fluida
+    _words = _splitIntoSentences(text);
     _currentWordIndex = 0;
     _shouldContinue = true;
     _isPlaying = true;
@@ -111,24 +140,35 @@ class TtsServiceAdvanced {
     await _speakNextWord();
   }
 
-  List<String> _splitIntoWordGroups(String text, {int wordsPerGroup = 5}) {
+  List<String> _splitIntoSentences(String text) {
     // Limpiar el texto
     final cleanText = text.replaceAll(RegExp(r'\s+'), ' ').trim();
     
-    // Dividir en palabras
-    final allWords = cleanText.split(' ');
-    final groups = <String>[];
+    // Dividir por oraciones (punto, punto y coma, dos puntos, saltos de línea)
+    final sentences = cleanText.split(RegExp(r'[.;:\n]+'));
     
-    // Agrupar palabras
-    for (int i = 0; i < allWords.length; i += wordsPerGroup) {
-      final end = (i + wordsPerGroup < allWords.length) 
-          ? i + wordsPerGroup 
-          : allWords.length;
-      final group = allWords.sublist(i, end).join(' ');
-      groups.add(group);
+    // Filtrar oraciones vacías y limpiar espacios
+    final validSentences = sentences
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+    
+    // Si no hay oraciones válidas o el texto es muy corto, dividir en párrafos grandes
+    if (validSentences.isEmpty || validSentences.length == 1) {
+      // Dividir en fragmentos de aproximadamente 50 palabras
+      final words = cleanText.split(' ');
+      final chunks = <String>[];
+      
+      for (int i = 0; i < words.length; i += 50) {
+        final end = (i + 50 < words.length) ? i + 50 : words.length;
+        final chunk = words.sublist(i, end).join(' ');
+        chunks.add(chunk);
+      }
+      
+      return chunks.isEmpty ? [cleanText] : chunks;
     }
     
-    return groups;
+    return validSentences;
   }
 
   Future<void> _speakNextWord() async {
@@ -150,7 +190,22 @@ class TtsServiceAdvanced {
     // Notificar progreso
     onProgress?.call(_currentWordIndex, _words.length);
     
-    await _flutterTts.speak(word);
+    try {
+      final result = await _flutterTts.speak(word);
+      if (result == 0) {
+        print('TTS: Error al hablar - Motor no vinculado');
+        // Intentar reinicializar
+        await Future.delayed(const Duration(milliseconds: 100));
+        await applyConfig(_config);
+        // Reintentar
+        await _flutterTts.speak(word);
+      }
+    } catch (e) {
+      print('TTS: Excepción al hablar - $e');
+      _isPlaying = false;
+      _isPaused = false;
+      onStateChanged?.call();
+    }
   }
 
   void _onWordCompleted() {
@@ -196,10 +251,10 @@ class TtsServiceAdvanced {
     onStateChanged?.call();
   }
 
-  /// Saltar adelante (10 palabras)
+  /// Saltar adelante (1 oración)
   Future<void> skipForward() async {
     if (_words.isNotEmpty) {
-      _currentWordIndex = (_currentWordIndex + 2).clamp(0, _words.length - 1);
+      _currentWordIndex = (_currentWordIndex + 1).clamp(0, _words.length - 1);
       if (_isPlaying && !_isPaused) {
         await _flutterTts.stop();
         await _speakNextWord();
@@ -208,10 +263,10 @@ class TtsServiceAdvanced {
     }
   }
 
-  /// Saltar atrás (10 palabras)
+  /// Saltar atrás (1 oración)
   Future<void> skipBackward() async {
     if (_words.isNotEmpty) {
-      _currentWordIndex = (_currentWordIndex - 2).clamp(0, _words.length - 1);
+      _currentWordIndex = (_currentWordIndex - 1).clamp(0, _words.length - 1);
       if (_isPlaying && !_isPaused) {
         await _flutterTts.stop();
         await _speakNextWord();

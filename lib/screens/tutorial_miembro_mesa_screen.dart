@@ -95,7 +95,7 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: const Text('Tutorial Miembro de Mesa'),
         elevation: 0,
@@ -133,14 +133,14 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
                 YoutubePlayer(
                   controller: _youtubeController,
                   showVideoProgressIndicator: true,
-                  progressIndicatorColor: const Color(0xFF7C4DFF),
+                  progressIndicatorColor: const Color(0xFFE53935),
                   bottomActions: [
                     CurrentPosition(),
                     ProgressBar(
                       isExpanded: true,
                       colors: const ProgressBarColors(
-                        playedColor: Color(0xFF7C4DFF),
-                        handleColor: Color(0xFF7C4DFF),
+                        playedColor: Color(0xFFE53935),
+                        handleColor: Color(0xFFE53935),
                       ),
                     ),
                     RemainingDuration(),
@@ -254,7 +254,7 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7C4DFF),
+                  backgroundColor: const Color(0xFFE53935),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -289,7 +289,7 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
   Widget _buildProgressIndicator() {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: const Color(0xFF7C4DFF),
+      color: const Color(0xFFE53935),
       child: Column(
         children: [
           Row(
@@ -353,7 +353,7 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF7C4DFF).withOpacity(0.1),
+              color: const Color(0xFFE53935).withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -470,7 +470,7 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
                       width: 28,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF7C4DFF),
+                        color: const Color(0xFFE53935),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Center(
@@ -570,7 +570,7 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
                   onPressed: _anteriorPaso,
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: const BorderSide(color: Color(0xFF7C4DFF)),
+                    side: const BorderSide(color: Color(0xFFE53935)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -579,7 +579,7 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
                     'Anterior',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFFE53935),
                     ),
                   ),
                 ),
@@ -590,7 +590,7 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
               child: ElevatedButton(
                 onPressed: isLastStep ? _finalizarTutorial : _siguientePaso,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7C4DFF),
+                  backgroundColor: const Color(0xFFE53935),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(

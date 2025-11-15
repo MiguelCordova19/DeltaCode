@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../models/mensaje_chat.dart';
+import '../models/chat_conversation.dart';
 import '../services/gemini_service.dart';
+import '../services/chat_storage_service.dart';
 
 class ChatElectoralScreen extends StatefulWidget {
-  const ChatElectoralScreen({super.key});
+  final String? conversacionId;
+
+  const ChatElectoralScreen({
+    super.key,
+    this.conversacionId,
+  });
 
   @override
   State<ChatElectoralScreen> createState() => _ChatElectoralScreenState();
@@ -12,18 +19,23 @@ class ChatElectoralScreen extends StatefulWidget {
 
 class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
   final GeminiService _geminiService = GeminiService();
+  final ChatStorageService _storageService = ChatStorageService();
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final List<MensajeChat> _mensajes = [];
   final FlutterTts _flutterTts = FlutterTts();
+  
+  ChatConversation? _conversacionActual;
+  List<MensajeChat> _mensajes = [];
   bool _isLoading = false;
+  bool _isSaving = false;
   String? _mensajeReproduciendo;
+  bool _sinConexion = false;
 
   @override
   void initState() {
     super.initState();
     _configurarTts();
-    _agregarMensajeBienvenida();
+    _inicializarConversacion();
   }
 
   @override
@@ -33,36 +45,59 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
     _flutterTts.stop();
     super.dispose();
   }
-  
+
+  Future<void> _inicializarConversacion() async {
+    if (widget.conversacionId != null) {
+      // Cargar conversación existente
+      final conversaciones = await _storageService.cargarConversaciones();
+      _conversacionActual = conversaciones.firstWhere(
+        (c) => c.id == widget.conversacionId,
+        orElse: () => _crearNuevaConversacion(),
+      );
+      setState(() {
+        _mensajes = List.from(_conversacionActual!.mensajes);
+      });
+    } else {
+      // Nueva conversación
+      _conversacionActual = _crearNuevaConversacion();
+      _agregarMensajeBienvenida();
+    }
+  }
+
+  ChatConversation _crearNuevaConversacion() {
+    return ChatConversation(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      titulo: 'Nueva conversación',
+      fechaCreacion: DateTime.now(),
+      ultimaActualizacion: DateTime.now(),
+      mensajes: [],
+    );
+  }
+
   Future<void> _configurarTts() async {
     await _flutterTts.setLanguage('es-ES');
     await _flutterTts.setSpeechRate(0.5);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
-    
+
     _flutterTts.setCompletionHandler(() {
       setState(() {
         _mensajeReproduciendo = null;
       });
     });
   }
-  
+
   Future<void> _reproducirMensaje(String mensajeId, String texto) async {
     if (_mensajeReproduciendo == mensajeId) {
-      // Si ya está reproduciendo este mensaje, detenerlo
       await _flutterTts.stop();
       setState(() {
         _mensajeReproduciendo = null;
       });
     } else {
-      // Detener cualquier reproducción anterior
       await _flutterTts.stop();
-      
-      // Reproducir el nuevo mensaje
       setState(() {
         _mensajeReproduciendo = mensajeId;
       });
-      
       await _flutterTts.speak(texto);
     }
   }
@@ -84,25 +119,36 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
     setState(() {
       _mensajes.add(mensaje);
     });
-    
-    // Verificar modelos disponibles
-    _verificarModelosDisponibles();
   }
-  
-  Future<void> _verificarModelosDisponibles() async {
+
+  Future<void> _guardarConversacion() async {
+    if (_conversacionActual == null || _isSaving) return;
+
+    setState(() => _isSaving = true);
+
     try {
-      final modelos = await _geminiService.listarModelosDisponibles();
-      print('=== MODELOS DISPONIBLES ===');
-      for (var modelo in modelos) {
-        print('- $modelo');
+      // Actualizar título si es la primera vez que se guarda
+      String titulo = _conversacionActual!.titulo;
+      if (titulo == 'Nueva conversación' && _mensajes.length > 1) {
+        // Usar el primer mensaje del usuario como título
+        final primerMensajeUsuario = _mensajes.firstWhere(
+          (m) => m.esUsuario && m.id != 'bienvenida',
+          orElse: () => _mensajes.first,
+        );
+        titulo = ChatConversation.generarTituloAutomatico(primerMensajeUsuario.texto);
       }
-      print('===========================');
-      
-      if (modelos.isEmpty) {
-        print('No se encontraron modelos disponibles');
-      }
+
+      _conversacionActual = _conversacionActual!.copyWith(
+        titulo: titulo,
+        ultimaActualizacion: DateTime.now(),
+        mensajes: _mensajes,
+      );
+
+      await _storageService.guardarConversacion(_conversacionActual!);
     } catch (e) {
-      print('Error al verificar modelos: $e');
+      print('Error al guardar conversación: $e');
+    } finally {
+      setState(() => _isSaving = false);
     }
   }
 
@@ -121,10 +167,14 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
     setState(() {
       _mensajes.add(mensajeUsuario);
       _isLoading = true;
+      _sinConexion = false;
     });
 
     _messageController.clear();
     _scrollToBottom();
+
+    // Guardar después de agregar mensaje del usuario
+    await _guardarConversacion();
 
     try {
       // Construir historial para contexto
@@ -156,19 +206,30 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
       });
 
       _scrollToBottom();
+
+      // Guardar después de recibir respuesta
+      await _guardarConversacion();
     } catch (e) {
       setState(() {
         _isLoading = false;
+        _sinConexion = true;
       });
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+
+      // Agregar mensaje de error
+      final mensajeError = MensajeChat(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        texto: 'Lo siento, no tengo conexión a internet en este momento. '
+            'Puedes revisar el historial de conversaciones anteriores mientras tanto.',
+        esUsuario: false,
+        timestamp: DateTime.now(),
+      );
+
+      setState(() {
+        _mensajes.add(mensajeError);
+      });
+
+      _scrollToBottom();
+      await _guardarConversacion();
     }
   }
 
@@ -184,17 +245,99 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
     });
   }
 
-  void _mostrarDialogoApiKey() {
+  void _mostrarMenuOpciones() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: Color(0xFFE53935)),
+              title: const Text('Eliminar conversación'),
+              onTap: () {
+                Navigator.pop(context);
+                _confirmarEliminarConversacion();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline, color: Color(0xFFE53935)),
+              title: const Text('Acerca del asistente'),
+              onTap: () {
+                Navigator.pop(context);
+                _mostrarInfoAsistente();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmarEliminarConversacion() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Configurar API Key'),
-        content: const Text(
-          'Para usar el asistente electoral, necesitas configurar tu API Key de Google Gemini.\n\n'
-          '1. Ve a https://makersuite.google.com/app/apikey\n'
-          '2. Crea una API key gratuita\n'
-          '3. Copia la key en el archivo lib/services/gemini_service.dart\n\n'
-          'Gemini Flash es completamente gratuito.',
+        title: const Text('Eliminar conversación'),
+        content: const Text('¿Estás seguro de que deseas eliminar esta conversación?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (_conversacionActual != null) {
+                await _storageService.eliminarConversacion(_conversacionActual!.id);
+              }
+              if (mounted) {
+                Navigator.pop(context); // Cerrar diálogo
+                Navigator.pop(context, true); // Volver a lista
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE53935),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _mostrarInfoAsistente() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Asistente Electoral'),
+        content: const SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Tu asistente personal para las Elecciones 2026',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16),
+              Text('Características:'),
+              SizedBox(height: 8),
+              Text('• Conversaciones guardadas localmente'),
+              Text('• Historial accesible sin internet'),
+              Text('• Respuestas sobre el proceso electoral'),
+              Text('• Información de candidatos y partidos'),
+              Text('• Lectura de mensajes con voz'),
+              SizedBox(height: 16),
+              Text(
+                'Nota: Se requiere conexión a internet para enviar nuevas preguntas.',
+                style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -206,60 +349,42 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
     );
   }
 
-  void _limpiarChat() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Limpiar conversación'),
-        content: const Text('¿Estás seguro de que deseas limpiar toda la conversación?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _mensajes.clear();
-                _agregarMensajeBienvenida();
-              });
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Limpiar'),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Asistente Electoral'),
-            Text(
-              'Elecciones 2026',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-            ),
+            Text(_conversacionActual?.titulo ?? 'Asistente Electoral'),
+            if (_sinConexion)
+              const Text(
+                'Sin conexión',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+              ),
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            onPressed: _limpiarChat,
-            tooltip: 'Limpiar conversación',
-          ),
+          if (_isSaving)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: _mostrarMenuOpciones,
+            ),
         ],
       ),
       body: Column(
@@ -275,8 +400,8 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
                 return _MensajeBubble(
                   mensaje: mensaje,
                   estaReproduciendo: _mensajeReproduciendo == mensaje.id,
-                  onReproducir: mensaje.esUsuario 
-                      ? null 
+                  onReproducir: mensaje.esUsuario
+                      ? null
                       : () => _reproducirMensaje(mensaje.id, mensaje.texto),
                 );
               },
@@ -351,7 +476,7 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
                   const SizedBox(width: 8),
                   Container(
                     decoration: const BoxDecoration(
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFFE53935),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
@@ -392,8 +517,8 @@ class _MensajeBubble extends StatelessWidget {
           if (!mensaje.esUsuario) ...[
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF7C4DFF),
+              decoration: const BoxDecoration(
+                color: Color(0xFFE53935),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -406,15 +531,15 @@ class _MensajeBubble extends StatelessWidget {
           ],
           Flexible(
             child: Column(
-              crossAxisAlignment: mensaje.esUsuario 
-                  ? CrossAxisAlignment.end 
+              crossAxisAlignment: mensaje.esUsuario
+                  ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: mensaje.esUsuario
-                        ? const Color(0xFF7C4DFF)
+                        ? const Color(0xFFE53935)
                         : Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
@@ -446,8 +571,8 @@ class _MensajeBubble extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: estaReproduciendo 
-                            ? const Color(0xFF7C4DFF).withOpacity(0.1)
+                        color: estaReproduciendo
+                            ? const Color(0xFFE53935).withOpacity(0.1)
                             : Colors.grey[100],
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -457,8 +582,8 @@ class _MensajeBubble extends StatelessWidget {
                           Icon(
                             estaReproduciendo ? Icons.stop : Icons.volume_up,
                             size: 16,
-                            color: estaReproduciendo 
-                                ? const Color(0xFF7C4DFF)
+                            color: estaReproduciendo
+                                ? const Color(0xFFE53935)
                                 : Colors.grey[700],
                           ),
                           const SizedBox(width: 4),
@@ -466,11 +591,11 @@ class _MensajeBubble extends StatelessWidget {
                             estaReproduciendo ? 'Detener' : 'Escuchar',
                             style: TextStyle(
                               fontSize: 12,
-                              color: estaReproduciendo 
-                                  ? const Color(0xFF7C4DFF)
+                              color: estaReproduciendo
+                                  ? const Color(0xFFE53935)
                                   : Colors.grey[700],
-                              fontWeight: estaReproduciendo 
-                                  ? FontWeight.w600 
+                              fontWeight: estaReproduciendo
+                                  ? FontWeight.w600
                                   : FontWeight.normal,
                             ),
                           ),

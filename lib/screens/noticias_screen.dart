@@ -108,20 +108,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
     }
   }
 
-  String _formatearFecha(DateTime fecha) {
-    final ahora = DateTime.now();
-    final diferencia = ahora.difference(fecha);
 
-    if (diferencia.inMinutes < 60) {
-      return 'Hace ${diferencia.inMinutes} min';
-    } else if (diferencia.inHours < 24) {
-      return 'Hace ${diferencia.inHours} h';
-    } else if (diferencia.inDays < 7) {
-      return 'Hace ${diferencia.inDays} días';
-    } else {
-      return '${fecha.day}/${fecha.month}/${fecha.year}';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +231,6 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
                             return _NoticiaCard(
                               noticia: noticia,
                               onTap: () => _abrirNoticia(noticia.url),
-                              formatearFecha: _formatearFecha,
                             );
                           },
                         ),
@@ -259,12 +245,10 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
 class _NoticiaCard extends StatelessWidget {
   final Noticia noticia;
   final VoidCallback onTap;
-  final String Function(DateTime) formatearFecha;
 
   const _NoticiaCard({
     required this.noticia,
     required this.onTap,
-    required this.formatearFecha,
   });
 
   @override
@@ -330,22 +314,9 @@ class _NoticiaCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // Footer con fecha y fuente
+              // Footer con fuente
               Row(
                 children: [
-                  Icon(
-                    Icons.access_time,
-                    size: 14,
-                    color: Colors.grey[600],
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    formatearFecha(noticia.fechaPublicacion),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(

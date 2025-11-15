@@ -125,7 +125,7 @@ class _MiembrosMesaScreenState extends State<MiembrosMesaScreen> with SingleTick
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: const Text('Miembros de Mesa'),
         elevation: 0,
@@ -173,7 +173,7 @@ class _MiembrosMesaScreenState extends State<MiembrosMesaScreen> with SingleTick
           const Icon(
             Icons.search,
             size: 64,
-            color: Color(0xFF7C4DFF),
+            color: Color(0xFFE53935),
           ),
           const SizedBox(height: 16),
           const Text(
@@ -201,13 +201,13 @@ class _MiembrosMesaScreenState extends State<MiembrosMesaScreen> with SingleTick
             decoration: InputDecoration(
               labelText: 'Número de DNI',
               hintText: '12345678',
-              prefixIcon: const Icon(Icons.badge, color: Color(0xFF7C4DFF)),
+              prefixIcon: const Icon(Icons.badge, color: Color(0xFFE53935)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF7C4DFF), width: 2),
+                borderSide: const BorderSide(color: Color(0xFFE53935), width: 2),
               ),
             ),
           ),
@@ -215,7 +215,7 @@ class _MiembrosMesaScreenState extends State<MiembrosMesaScreen> with SingleTick
           ElevatedButton(
             onPressed: _buscando ? null : _buscarPorDni,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF7C4DFF),
+              backgroundColor: const Color(0xFFE53935),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -293,9 +293,9 @@ class _MiembrosMesaScreenState extends State<MiembrosMesaScreen> with SingleTick
                           selected: isSelected,
                           onSelected: (selected) => _filtrarPorDistrito(distrito),
                           backgroundColor: Colors.white,
-                          selectedColor: const Color(0xFF7C4DFF).withOpacity(0.2),
+                          selectedColor: const Color(0xFFE53935).withOpacity(0.2),
                           labelStyle: TextStyle(
-                            color: isSelected ? const Color(0xFF7C4DFF) : Colors.black87,
+                            color: isSelected ? const Color(0xFFE53935) : Colors.black87,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
@@ -442,7 +442,7 @@ class _MiembroCard extends StatelessWidget {
               const Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
-                color: Color(0xFF7C4DFF),
+                color: Color(0xFFE53935),
               ),
             ],
           ),
@@ -454,13 +454,13 @@ class _MiembroCard extends StatelessWidget {
   Color _getColorByCargo(CargoMesa cargo) {
     switch (cargo) {
       case CargoMesa.presidente:
-        return Colors.purple;
+        return const Color(0xFFE53935); // Rojo
       case CargoMesa.secretario:
-        return Colors.blue;
+        return const Color(0xFFD32F2F); // Rojo oscuro
       case CargoMesa.tercerMiembro:
-        return Colors.green;
+        return const Color(0xFFEF5350); // Rojo claro
       case CargoMesa.suplente:
-        return Colors.orange;
+        return const Color(0xFFE57373); // Rojo más claro
     }
   }
 

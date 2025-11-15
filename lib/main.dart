@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/splash_screen.dart';
+import 'config/app_colors.dart';
 
 void main() {
   runApp(const EleccionesApp());
@@ -25,17 +26,11 @@ class EleccionesApp extends StatelessWidget {
         Locale('es', 'ES'), // Español
         Locale('es', 'PE'), // Español Perú
       ],
-      locale: const Locale('es', 'ES'),
+      locale: const Locale('es', 'PE'), // Español Perú por defecto
       
-      theme: ThemeData(
-        primaryColor: const Color(0xFF7C4DFF),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF7C4DFF),
-          primary: const Color(0xFF7C4DFF),
-        ),
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-        useMaterial3: true,
-      ),
+      // Tema con colores peruanos
+      theme: AppTheme.lightTheme,
+      
       home: const SplashScreen(),
     );
   }

@@ -11,7 +11,7 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: const Text('Información Miembros de Mesa'),
         elevation: 0,
@@ -69,7 +69,7 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
             _buildCard(
               title: 'Tus Derechos',
               icon: Icons.check_circle,
-              color: Colors.blue,
+              color: const Color(0xFFE53935),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: InfoMiembroMesa.derechos.map((derecho) {
@@ -80,7 +80,7 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.check_circle,
-                          color: Colors.blue,
+                          color: Color(0xFFE53935),
                           size: 20,
                         ),
                         const SizedBox(width: 12),
@@ -103,7 +103,7 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
             _buildCard(
               title: 'Tus Obligaciones',
               icon: Icons.assignment,
-              color: Colors.orange,
+              color: const Color(0xFFD32F2F),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: InfoMiembroMesa.obligaciones.map((obligacion) {
@@ -114,7 +114,7 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.circle,
-                          color: Colors.orange,
+                          color: Color(0xFFD32F2F),
                           size: 8,
                         ),
                         const SizedBox(width: 12),
@@ -137,7 +137,7 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
             _buildCard(
               title: 'Funciones por Cargo',
               icon: Icons.people,
-              color: const Color(0xFF7C4DFF),
+              color: const Color(0xFFE53935),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: InfoMiembroMesa.funcionesPorCargo.entries.map((entry) {
@@ -151,7 +151,7 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF7C4DFF),
+                            color: Color(0xFFE53935),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -176,7 +176,7 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
             _buildCard(
               title: 'Causales de Excusa',
               icon: Icons.event_busy,
-              color: Colors.red,
+              color: const Color(0xFFE53935),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -193,10 +193,10 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.05),
+                        color: const Color(0xFFE53935).withOpacity(0.05),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: Colors.red.withOpacity(0.2),
+                          color: const Color(0xFFE53935).withOpacity(0.2),
                         ),
                       ),
                       child: Column(
@@ -238,21 +238,21 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
             _buildCard(
               title: 'Justificación de Inasistencia',
               icon: Icons.warning,
-              color: Colors.deepOrange,
+              color: const Color(0xFFD32F2F),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.deepOrange.withOpacity(0.1),
+                      color: const Color(0xFFD32F2F).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       children: [
                         const Icon(
                           Icons.warning,
-                          color: Colors.deepOrange,
+                          color: Color(0xFFD32F2F),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -297,7 +297,7 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
                 icon: const Icon(Icons.play_circle_filled, size: 24),
                 label: const Text('Ver Video de Beneficios'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: const Color(0xFFE53935),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -324,7 +324,7 @@ class InfoMiembrosMesaScreen extends StatelessWidget {
                 icon: const Icon(Icons.menu_book, size: 24),
                 label: const Text('Ver Tutorial Paso a Paso'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7C4DFF),
+                  backgroundColor: const Color(0xFFD32F2F),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
