@@ -41,6 +41,13 @@ class _LoginScreenState extends State<LoginScreen> {
       fieldLabelText: 'Fecha de emisión',
       errorFormatText: 'Formato de fecha inválido',
       errorInvalidText: 'Fecha fuera del rango permitido',
+      // Deshabilitar fechas futuras explícitamente
+      selectableDayPredicate: (DateTime date) {
+        // Normalizar la fecha a comparar
+        final normalizedDate = DateTime(date.year, date.month, date.day);
+        // Solo permitir fechas hasta hoy
+        return !normalizedDate.isAfter(today);
+      },
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -49,6 +56,10 @@ class _LoginScreenState extends State<LoginScreen> {
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
+            // Deshabilitar entrada manual en algunos dispositivos
+            inputDecorationTheme: const InputDecorationTheme(
+              border: InputBorder.none,
+            ),
           ),
           child: child!,
         );
@@ -56,11 +67,48 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (picked != null) {
-      // Validar nuevamente que no sea futura
-      if (picked.isAfter(today)) {
-        setState(() {
-          _errorMessage = 'La fecha de emisión no puede ser futura';
-        });
+      // Triple validación para asegurar que no sea futura
+      final pickedNormalized = DateTime(picked.year, picked.month, picked.day);
+      
+      if (pickedNormalized.isAfter(today)) {
+        if (mounted) {
+          setState(() {
+            _errorMessage = 'La fecha de emisión no puede ser futura. Por favor, selecciona una fecha válida.';
+          });
+          
+          // Mostrar también un diálogo de error
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Row(
+                children: [
+                  Icon(Icons.error, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text('Fecha inválida'),
+                ],
+              ),
+              content: const Text(
+                'La fecha de emisión del DNI no puede ser una fecha futura. Por favor, selecciona la fecha correcta que aparece en tu documento.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Entendido'),
+                ),
+              ],
+            ),
+          );
+        }
+        return;
+      }
+      
+      // Validar que no sea antes del año 2000
+      if (pickedNormalized.isBefore(DateTime(2000))) {
+        if (mounted) {
+          setState(() {
+            _errorMessage = 'La fecha de emisión no puede ser anterior al año 2000';
+          });
+        }
         return;
       }
       

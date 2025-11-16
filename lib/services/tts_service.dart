@@ -40,17 +40,20 @@ class TtsService {
       onStateChanged?.call();
     });
 
-    _flutterTts.setCompletionHandler(() {
+    _flutterTts.setCompletionHandler(() async {
       print('TTS: Completado chunk $_currentChunkIndex de ${_textChunks.length}');
       
-      if (!_isPaused) {
+      if (!_isPaused && _isPlaying) {
         _currentChunkIndex++;
         
         if (_currentChunkIndex < _textChunks.length) {
           // Hay más chunks por leer
-          _speakNextChunk();
+          print('TTS: Leyendo siguiente chunk $_currentChunkIndex');
+          await Future.delayed(const Duration(milliseconds: 100)); // Pequeña pausa entre chunks
+          await _speakNextChunk();
         } else {
           // Terminó toda la lectura
+          print('TTS: Lectura completa terminada');
           _isPlaying = false;
           _isPaused = false;
           _currentChunkIndex = 0;
@@ -143,12 +146,21 @@ class TtsService {
     // Dividir el texto en oraciones para poder pausar/reanudar
     _textChunks = text.split(RegExp(r'[.!?]\s+'))
         .where((chunk) => chunk.trim().isNotEmpty)
-        .map((chunk) => chunk.trim() + '.')
+        .map((chunk) {
+          String trimmed = chunk.trim();
+          // Agregar punto solo si no termina con puntuación
+          if (!trimmed.endsWith('.') && !trimmed.endsWith('!') && !trimmed.endsWith('?')) {
+            trimmed += '.';
+          }
+          return trimmed;
+        })
         .toList();
     
     if (_textChunks.isEmpty) {
       _textChunks = [text];
     }
+    
+    print('TTS: Dividido en ${_textChunks.length} chunks');
   }
 
   Future<void> _speakNextChunk() async {
@@ -210,9 +222,16 @@ class TtsService {
     }
     
     if (contenido != null && contenido.isNotEmpty) {
-      fullText += contenido;
+      // Limpiar el contenido de caracteres problemáticos
+      String cleanContent = contenido
+          .replaceAll(RegExp(r'\s+'), ' ') // Normalizar espacios
+          .replaceAll(RegExp(r'[•\-–—]'), ', ') // Reemplazar viñetas y guiones
+          .trim();
+      fullText += cleanContent;
     }
 
+    print('TTS: Texto completo a leer (${fullText.length} caracteres): ${fullText.substring(0, fullText.length > 100 ? 100 : fullText.length)}...');
+    
     await speak(fullText);
   }
 
