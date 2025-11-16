@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../services/usuario_service.dart';
+import '../services/notification_service.dart';
 import '../models/usuario.dart';
 import 'plan_gobierno_screen.dart';
 import 'miembros_mesa_screen.dart';
@@ -10,6 +11,7 @@ import 'noticias_screen.dart';
 import 'locales_votacion_screen.dart';
 import 'informacion_electoral_screen.dart';
 import 'tutoriales_screen.dart';
+import 'como_votar_screen.dart';
 
 class HomeScreenContent extends StatefulWidget {
   const HomeScreenContent({super.key});
@@ -559,7 +561,33 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       IconButton(
                         icon: const Icon(Icons.notifications_outlined,
                             color: Colors.white),
-                        onPressed: () {},
+                        onPressed: () async {
+                          // Mostrar notificación de prueba
+                          await NotificationService().mostrarNotificacionNoticias();
+                          
+                          // Mostrar confirmación en la app
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Row(
+                                  children: [
+                                    Icon(Icons.check_circle, color: Colors.white),
+                                    SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text('Notificación enviada. Revisa tu bandeja de notificaciones.'),
+                                    ),
+                                  ],
+                                ),
+                                backgroundColor: const Color(0xFFE53935),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                duration: const Duration(seconds: 3),
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -621,6 +649,16 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           iconColor: const Color(0xFFD32F2F), // Rojo
                           textColor: Colors.black87,
                           destination: const NoticiasScreen(),
+                        ),
+                        _buildDiscoveryCard(
+                          icon: Icons.how_to_vote,
+                          title: 'Cómo Votar',
+                          subtitle: 'Tutoriales en video',
+                          color: const Color(0xFFD32F2F), // Rojo destacado
+                          iconColor: Colors.white,
+                          textColor: Colors.white,
+                          isHighlighted: true,
+                          destination: const ComoVotarScreen(),
                         ),
                       ]),
                     ),

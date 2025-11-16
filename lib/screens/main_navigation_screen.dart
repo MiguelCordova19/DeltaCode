@@ -248,7 +248,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
                 _buildNavItem(Icons.people_outline, 2),
                 _buildNavItem(Icons.calendar_month_outlined, 3),
                 _buildNavItem(Icons.auto_stories, 4),
-                _buildNavItem(Icons.settings_outlined, 5),
+                _buildNavItem(Icons.person_outline, 5),
               ],
             ),
           ),
@@ -267,7 +267,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
       'Candidatos',
       'Calendario',
       'Curiosidades',
-      'Configuración',
+      'Mi Perfil',
     ];
     
     final labelsQu = [
@@ -276,7 +276,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
       'Akllasqakuna',
       'Punchaw Qillqa',
       'Yachaykuna',
-      'Allichay',
+      'Ñuqap Perfilniy',
     ];
     
     // Detectar idioma actual (puedes mejorarlo con Provider si lo necesitas)

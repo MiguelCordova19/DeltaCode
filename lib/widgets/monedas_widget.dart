@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/gamificacion_service.dart';
+import '../services/monedas_notifier.dart';
 import '../models/puntos_usuario.dart';
 import '../screens/recompensas_screen.dart';
 
@@ -12,12 +13,25 @@ class MonedasWidget extends StatefulWidget {
 
 class _MonedasWidgetState extends State<MonedasWidget> {
   final GamificacionService _gamificacionService = GamificacionService();
+  final MonedasNotifier _notifier = MonedasNotifier();
   int _balance = 0;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _cargarBalance();
+    // Escuchar cambios en las monedas
+    _notifier.addListener(_onMonedasChanged);
+  }
+
+  @override
+  void dispose() {
+    _notifier.removeListener(_onMonedasChanged);
+    super.dispose();
+  }
+
+  void _onMonedasChanged() {
     _cargarBalance();
   }
 

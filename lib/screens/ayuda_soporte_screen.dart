@@ -53,6 +53,17 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
           'Es obligatorio asistir. Recibirás capacitación gratuita y una remuneración. Si no puedes asistir, debes presentar una excusa válida.',
     },
     {
+      'pregunta': '¿Cómo funciona el sistema de suplentes para miembros de mesa?',
+      'respuesta':
+          'La ONPE sortea 3 miembros titulares y 3 suplentes por mesa. Si un titular no asiste:\n\n'
+          '• Primer Suplente → Reemplaza al Presidente\n'
+          '• Segundo Suplente → Reemplaza al Secretario\n'
+          '• Tercer Suplente → Reemplaza al Tercer Miembro\n\n'
+          'Si los suplentes tampoco asisten, se convoca a electores presentes en el local. '
+          'Los miembros que no asisten sin justificación reciben una multa. '
+          'Los suplentes que asumen reciben la misma compensación económica y permiso laboral que los titulares.',
+    },
+    {
       'pregunta': '¿Cómo puedo justificar mi inasistencia?',
       'respuesta':
           'Puedes justificar tu inasistencia por enfermedad, viaje, o vivir lejos del local. Debes presentar documentos que lo sustenten.',

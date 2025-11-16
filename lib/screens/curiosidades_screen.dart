@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/presidente.dart';
+import '../models/presidente_detalle.dart';
 import '../services/gamificacion_service.dart';
+import 'presidente_detalle_screen.dart';
+import 'quizzes_tab_screen.dart';
 
 class CuriosidadesScreen extends StatefulWidget {
   const CuriosidadesScreen({super.key});
@@ -17,6 +20,7 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
   late AnimationController _controller;
   late AnimationController _handController;
   late ScrollController _scrollController;
+  late TabController _tabController;
   Presidente? _selectedPresidente;
   Color? _selectedColor;
   
@@ -151,6 +155,7 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
       vsync: this,
     )..repeat(reverse: true);
     _scrollController = ScrollController();
+    _tabController = TabController(length: 2, vsync: this);
     _controller.forward();
     
     // Cargar historias vistas
@@ -175,6 +180,7 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
     _controller.dispose();
     _handController.dispose();
     _scrollController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
   
@@ -286,7 +292,44 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      body: Stack(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFE53935),
+        foregroundColor: Colors.white,
+        title: const Text('Curiosidades'),
+        elevation: 0,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          indicatorWeight: 3,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          labelStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          tabs: const [
+            Tab(text: 'Historia'),
+            Tab(text: 'Quizzes'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Tab 1: Historia (contenido actual)
+          _buildHistoriaTab(),
+          // Tab 2: Quizzes
+          QuizzesTabScreen(
+            visitedYears: _visitedYears,
+            presidentes: _presidentes,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoriaTab() {
+    return Stack(
         children: [
           CustomScrollView(
         controller: _scrollController,
@@ -295,8 +338,9 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
           SliverAppBar(
             expandedHeight: 200,
             floating: false,
-            pinned: true,
+            pinned: false,
             backgroundColor: const Color(0xFFE53935),
+            automaticallyImplyLeading: false,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(
@@ -312,34 +356,34 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 30),
                     const Text(
                       '🏛️',
-                      style: TextStyle(fontSize: 48),
+                      style: TextStyle(fontSize: 40),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     const Text(
                       'Presidentes del Perú',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 28,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Text(
                       '2000 - 2025',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
-                        fontSize: 16,
+                        fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Text(
                       '${_visitedYears.length}/${_presidentes.length} historias descubiertas',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.8),
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -435,8 +479,7 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
               ),
             ),
         ],
-      ),
-    );
+      );
   }
 
   Widget _buildTimelineItem({
@@ -927,42 +970,84 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
                         ),
                       ),
 
-                      // Botón cerrar
+                      // Botones
                       Padding(
                         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: color,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                        child: Column(
+                          children: [
+                            // Botón "¿Deseas saber más?" - solo si existe el detalle
+                            if (PresidenteDetalle.detalles.containsKey(presidente.nombre)) ...[
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PresidenteDetalleScreen(
+                                          detalle: PresidenteDetalle.detalles[presidente.nombre]!,
+                                          color: color,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.article_outlined),
+                                  label: const Text(
+                                    '¿Deseas saber más?',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: color,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 2,
+                                  ),
+                                ),
                               ),
-                              elevation: 0,
-                            ),
-                            child: const Text(
-                              'Regresar',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                              const SizedBox(height: 12),
+                            ],
+                            // Botón cerrar
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: color,
+                                  side: BorderSide(color: color, width: 2),
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Regresar',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ],
-                    ),
                   ),
                 ),
               ),
             ),
           ),
-        );
-      },
-    );
+        ),
+      );
+    },
+  );
     
     // Mostrar animación de monedas después de cerrar el modal (solo si es primera vez)
     if (isFirstTime && mounted) {

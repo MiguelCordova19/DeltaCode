@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/puntos_usuario.dart';
+import 'monedas_notifier.dart';
 
 class GamificacionService {
   static const String _keyPuntos = 'puntos_usuario';
@@ -78,6 +79,10 @@ class GamificacionService {
     );
 
     await guardarPuntos(puntosNuevos);
+    
+    // Notificar cambio para actualizar UI en tiempo real
+    MonedasNotifier().notificarCambio();
+    
     return puntosNuevos;
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../models/mensaje_chat.dart';
 import '../models/chat_conversation.dart';
 import '../services/gemini_service.dart';
@@ -105,7 +106,9 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
   void _agregarMensajeBienvenida() {
     final mensaje = MensajeChat(
       id: 'bienvenida',
-      texto: '¡Hola! 👋 Soy tu asistente electoral para las Elecciones 2026.\n\n'
+      texto: '¡Hola! 👋 Soy L.E.Y.S.I.\n'
+          '(Libertad Electoral Y Servicio Innovador)\n\n'
+          '✨ Tu asistente innovador para ejercer tu libertad electoral\n\n'
           'Puedo ayudarte con información sobre:\n'
           '• Partidos políticos y precandidatos\n'
           '• Planes de gobierno\n'
@@ -153,15 +156,27 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
   }
 
   Future<void> _enviarMensaje() async {
+    // Prevenir múltiples envíos mientras se está procesando
+    if (_isLoading) return;
+    
     final texto = _messageController.text.trim();
     if (texto.isEmpty) return;
+
+    // Establecer _isLoading inmediatamente para prevenir múltiples clics
+    setState(() {
+      _isLoading = true;
+    });
 
     // Verificar conexión a internet antes de enviar
     try {
       // Intentar una petición simple para verificar conexión
       await _geminiService.verificarConexion();
     } catch (e) {
-      // Sin conexión
+      // Sin conexión - restaurar estado
+      setState(() {
+        _isLoading = false;
+      });
+      
       if (mounted) {
         showDialog(
           context: context,
@@ -199,7 +214,6 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
 
     setState(() {
       _mensajes.add(mensajeUsuario);
-      _isLoading = true;
       _sinConexion = false;
     });
 
@@ -346,18 +360,49 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Asistente Electoral'),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE53935).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.smart_toy,
+                color: Color(0xFFE53935),
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'L.E.Y.S.I.',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Libertad Electoral Y Servicio Innovador',
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         content: const SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Tu asistente personal para las Elecciones 2026',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                '✨ Tu asistente innovador para ejercer tu libertad electoral',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
               SizedBox(height: 16),
-              Text('Características:'),
+              Text('Características:', style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
               Text('• Conversaciones guardadas localmente'),
               Text('• Historial accesible sin internet'),
@@ -398,12 +443,13 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_conversacionActual?.titulo ?? 'Asistente Electoral'),
-            if (_sinConexion)
-              const Text(
-                'Sin conexión',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-              ),
+            Text(_conversacionActual?.titulo ?? 'L.E.Y.S.I.'),
+            Text(
+              _sinConexion 
+                ? 'Sin conexión' 
+                : 'Tu asistente electoral innovador',
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+            ),
           ],
         ),
         actions: [
@@ -514,12 +560,23 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFE53935),
+                    decoration: BoxDecoration(
+                      color: _isLoading 
+                          ? Colors.grey[400] 
+                          : const Color(0xFFE53935),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.send, color: Colors.white),
+                      icon: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Icon(Icons.send, color: Colors.white),
                       onPressed: _isLoading ? null : _enviarMensaje,
                     ),
                   ),
@@ -590,12 +647,65 @@ class _MensajeBubble extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Text(
-                    mensaje.texto,
-                    style: TextStyle(
-                      color: mensaje.esUsuario ? Colors.white : Colors.black87,
-                      fontSize: 15,
-                      height: 1.4,
+                  child: MarkdownBody(
+                    data: mensaje.texto,
+                    selectable: true,
+                    styleSheet: MarkdownStyleSheet(
+                      p: TextStyle(
+                        color: mensaje.esUsuario ? Colors.white : Colors.black87,
+                        fontSize: 15,
+                        height: 1.4,
+                      ),
+                      strong: TextStyle(
+                        color: mensaje.esUsuario ? Colors.white : Colors.black87,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      em: TextStyle(
+                        color: mensaje.esUsuario ? Colors.white : Colors.black87,
+                        fontSize: 15,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      listBullet: TextStyle(
+                        color: mensaje.esUsuario ? Colors.white : Colors.black87,
+                        fontSize: 15,
+                      ),
+                      code: TextStyle(
+                        color: mensaje.esUsuario ? Colors.white70 : Colors.black54,
+                        fontSize: 14,
+                        fontFamily: 'monospace',
+                        backgroundColor: mensaje.esUsuario 
+                            ? Colors.white.withOpacity(0.1)
+                            : Colors.grey[200],
+                      ),
+                      h1: TextStyle(
+                        color: mensaje.esUsuario ? Colors.white : Colors.black87,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      h2: TextStyle(
+                        color: mensaje.esUsuario ? Colors.white : Colors.black87,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      h3: TextStyle(
+                        color: mensaje.esUsuario ? Colors.white : Colors.black87,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      blockquote: TextStyle(
+                        color: mensaje.esUsuario ? Colors.white70 : Colors.black54,
+                        fontSize: 15,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      blockquoteDecoration: BoxDecoration(
+                        border: Border(
+                          left: BorderSide(
+                            color: mensaje.esUsuario ? Colors.white : const Color(0xFFE53935),
+                            width: 3,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
