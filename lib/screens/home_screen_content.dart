@@ -139,7 +139,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
               // Ícono 3D con sombras múltiples
               Container(
@@ -186,7 +186,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Subtítulo
               Padding(
@@ -326,7 +326,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Mensaje informativo con efecto sutil
               Padding(
@@ -371,7 +371,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                 ),
               ),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 20),
 
               // Botones con efecto 3D
               Padding(
@@ -502,7 +502,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                 ),
               ),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -584,15 +584,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           textColor: Colors.black87,
                           destination: const PlanGobiernoScreen(),
                         ),
-                        _buildDiscoveryCard(
-                          icon: Icons.people_outline,
-                          title: 'Precandidatos',
-                          subtitle: 'Conoce sus propuestas',
-                          color: Colors.white, // Blanco
-                          iconColor: const Color(0xFFD32F2F), // Rojo
-                          textColor: Colors.black87,
-                          destination: const CandidatosScreen(),
-                        ),
+
                         _buildDiscoveryCard(
                           icon: Icons.how_to_vote_outlined,
                           title: 'Miembros\nde Mesa',

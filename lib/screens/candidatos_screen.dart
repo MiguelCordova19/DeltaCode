@@ -65,106 +65,61 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
       },
       child: Column(
         children: [
-          // Header con gradiente rojo
+          // Barra de búsqueda
           Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFE53935), // Rojo principal
-                  Color(0xFFEF5350), // Rojo más claro
-                ],
+            color: Colors.white,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            child: Container(
+              height: 45,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: Colors.grey[300]!,
+                  width: 1,
+                ),
+              ),
+              child: TextField(
+                controller: _searchController,
+                onChanged: _filterPartidos,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 14,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Buscar partido político...',
+                  hintStyle: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 14,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.grey[600],
+                    size: 20,
+                  ),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(
+                            Icons.clear,
+                            color: Colors.grey[600],
+                            size: 18,
+                          ),
+                          onPressed: () {
+                            _searchController.clear();
+                            _filterPartidos('');
+                          },
+                        )
+                      : null,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
               ),
             ),
-            child: SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                // Barra superior con título y botón de búsqueda
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      const Expanded(
-                        child: Text(
-                          'Precandidatos',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(width: 48), // Balance para el back button
-                    ],
-                  ),
-                ),
-                // Barra de búsqueda
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(
-                        color: const Color(0xFFE57373).withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: TextField(
-                      controller: _searchController,
-                      onChanged: _filterPartidos,
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Buscar partido político...',
-                        hintStyle: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: Color(0xFFC62828),
-                          size: 22,
-                        ),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(
-                                  Icons.clear,
-                                  color: Color(0xFFC62828),
-                                  size: 20,
-                                ),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  _filterPartidos('');
-                                },
-                              )
-                            : null,
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
           ),
-        ),
-        // Lista de partidos
+          // Lista de partidos
         Expanded(
           child: _filteredPartidos.isEmpty
               ? Center(
@@ -257,29 +212,33 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
               Expanded(
                 flex: 2,
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Nombre del partido
-                      Text(
-                        partido.nombre,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2D2D2D),
-                          height: 1.2,
+                      Flexible(
+                        child: Text(
+                          partido.nombre,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF2D2D2D),
+                            height: 1.2,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                       ),
+                      
+                      const SizedBox(height: 4),
                       
                       // Siglas
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
-                          vertical: 4,
+                          vertical: 3,
                         ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFD32F2F).withOpacity(0.1),
@@ -305,7 +264,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
               
               // Botón "Ver Precandidatos"
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 9),
                 decoration: const BoxDecoration(
                   color: Color(0xFFD32F2F), // Rojo
                   borderRadius: BorderRadius.only(
@@ -481,7 +440,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
           Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xFF7C4DFF).withOpacity(0.05),
+            color: const Color(0xFFE53935).withOpacity(0.05),
             border: Border(
               bottom: BorderSide(
                 color: Colors.grey[200]!,
@@ -489,48 +448,49 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
               ),
             ),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 70,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFF7C4DFF),
-                    width: 2,
-                  ),
+          child: SafeArea(
+            bottom: false,
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                  onPressed: () {
+                    setState(() {
+                      _selectedPartido = null;
+                    });
+                  },
                 ),
+                const SizedBox(width: 8),
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFFE53935),
+                      width: 2,
+                    ),
+                  ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: _buildPartidoImage(_selectedPartido!.logoPath),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _selectedPartido!.nombre,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    _selectedPartido!.nombre,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Precandidatos 2026',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ],
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         Expanded(
@@ -848,7 +808,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF7C4DFF),
+                        color: Color(0xFFE53935),
                       ),
                     ),
                   ),
@@ -873,18 +833,18 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
+                      const Text(
                         'Ver más',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF7C4DFF),
+                          color: Color(0xFFE53935),
                         ),
                       ),
                       const SizedBox(width: 4),
                       const Icon(
                         Icons.arrow_forward,
-                        color: Color(0xFF7C4DFF),
+                        color: Color(0xFFE53935),
                         size: 18,
                       ),
                     ],
@@ -945,7 +905,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
   Widget _buildBottomNav(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      selectedItemColor: const Color(0xFF7C4DFF),
+      selectedItemColor: const Color(0xFFE53935),
       unselectedItemColor: Colors.grey,
       currentIndex: 0,
       items: const [

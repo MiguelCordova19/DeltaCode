@@ -522,7 +522,7 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
                     child: _buildYearCircle(presidente.anioInicio, color, presidente.esActual),
                   ),
                   // Manita animada con texto si no ha sido visitado y el tutorial está activo
-                  if (_showTutorial && !_visitedYears.contains(presidente.anioInicio))
+                  if (_showTutorial && !_visitedYears.contains(_presidentes.indexOf(presidente)))
                     Positioned(
                       left: 80,
                       top: 15,
@@ -585,7 +585,9 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
   }
 
   Widget _buildYearCircle(int year, Color color, bool esActual) {
-    final bool isVisited = _visitedYears.contains(year);
+    // Buscar el presidente por año para obtener su índice
+    final presidenteIndex = _presidentes.indexWhere((p) => p.anioInicio == year);
+    final bool isVisited = presidenteIndex >= 0 && _visitedYears.contains(presidenteIndex);
     
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 800),
@@ -681,19 +683,22 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
   }
 
   void _showPresidenteDetail(Presidente presidente, Color color, bool isLeft) async {
+    // Crear un ID único basado en el índice del presidente
+    final int presidenteId = _presidentes.indexOf(presidente);
+    
     // Verificar si es la primera vez que ve esta historia
-    final bool isFirstTime = !_visitedYears.contains(presidente.anioInicio);
+    final bool isFirstTime = !_visitedYears.contains(presidenteId);
     
     if (isFirstTime) {
       setState(() {
         _selectedPresidente = presidente;
         _selectedColor = color;
-        _visitedYears.add(presidente.anioInicio);
+        _visitedYears.add(presidenteId);
         _totalCoins += 10;
       });
       
-      // Guardar en persistencia
-      await _gamificacionService.marcarHistoriaVista(presidente.anioInicio);
+      // Guardar en persistencia usando el ID único
+      await _gamificacionService.marcarHistoriaVista(presidenteId);
     } else {
       setState(() {
         _selectedPresidente = presidente;

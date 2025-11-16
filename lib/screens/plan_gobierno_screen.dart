@@ -145,11 +145,12 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                 },
               ),
               title: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF),
+                      color: const Color(0xFFE53935),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
@@ -159,12 +160,15 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    'Elecciones 2026',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  const Flexible(
+                    child: Text(
+                      'Elecciones 2026',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -172,14 +176,14 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.settings_voice),
-                  color: const Color(0xFF7C4DFF),
+                  color: const Color(0xFFE53935),
                   onPressed: _showConfigDialog,
                   tooltip: 'Configurar voz',
                 ),
                 if (_isReading)
                   IconButton(
                     icon: Icon(_isPaused ? Icons.play_arrow : Icons.pause),
-                    color: const Color(0xFF7C4DFF),
+                    color: const Color(0xFFE53935),
                     onPressed: _toggleReadAll,
                     tooltip: _isPaused ? 'Reanudar' : 'Pausar',
                   ),
@@ -214,7 +218,7 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                         FloatingActionButton(
                           heroTag: 'pause_plan',
                           onPressed: _toggleReadAll,
-                          backgroundColor: _isPaused ? Colors.green : const Color(0xFF7C4DFF),
+                          backgroundColor: _isPaused ? const Color(0xFF4CAF50) : const Color(0xFFE53935),
                           tooltip: _isPaused ? 'Reanudar' : 'Pausar',
                           child: Icon(_isPaused ? Icons.play_arrow : Icons.pause),
                         ),
@@ -222,7 +226,7 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                         FloatingActionButton(
                           heroTag: 'stop_plan',
                           onPressed: _stopReading,
-                          backgroundColor: Colors.red,
+                          backgroundColor: const Color(0xFFD32F2F),
                           tooltip: 'Detener',
                           child: const Icon(Icons.stop),
                         ),
@@ -231,7 +235,7 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                   : FloatingActionButton.extended(
                       key: const ValueKey('not-reading'),
                       onPressed: _toggleReadAll,
-                      backgroundColor: const Color(0xFF7C4DFF),
+                      backgroundColor: const Color(0xFFE53935),
                       icon: const Icon(Icons.volume_up),
                       label: Text('Leer ${_categories[_selectedCategoryIndex]}'),
                     ),
@@ -585,7 +589,7 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
           Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xFF7C4DFF).withOpacity(0.05),
+            color: const Color(0xFFE53935).withOpacity(0.05),
             border: Border(
               bottom: BorderSide(
                 color: Colors.grey[200]!,
@@ -602,7 +606,7 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xFF7C4DFF),
+                    color: const Color(0xFFE53935),
                     width: 2,
                   ),
                 ),
@@ -647,7 +651,7 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                   duration: const Duration(milliseconds: 300),
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: _isPaused ? Colors.orange : const Color(0xFF7C4DFF),
+                    color: _isPaused ? const Color(0xFFFF6F00) : const Color(0xFFE53935),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
@@ -842,8 +846,15 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF7C4DFF) : Colors.grey[200],
+          color: isSelected ? const Color(0xFFE53935) : Colors.grey[200],
           borderRadius: BorderRadius.circular(20),
+          boxShadow: isSelected ? [
+            BoxShadow(
+              color: const Color(0xFFE53935).withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ] : null,
         ),
         child: Text(
           label,
@@ -877,7 +888,7 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.volume_up, size: 20),
-            color: const Color(0xFF7C4DFF),
+            color: const Color(0xFFE53935),
             onPressed: () => _readProposal(text),
             tooltip: 'Leer propuesta',
           ),
@@ -903,7 +914,7 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
   Widget _buildBottomNav(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      selectedItemColor: const Color(0xFF7C4DFF),
+      selectedItemColor: const Color(0xFFE53935),
       unselectedItemColor: Colors.grey,
       currentIndex: 0,
       items: const [

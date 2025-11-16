@@ -128,11 +128,12 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C4DFF),
+                color: const Color(0xFFE53935),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -142,12 +143,15 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            const Text(
-              'Elecciones 2026',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            const Flexible(
+              child: Text(
+                'Elecciones 2026',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -155,21 +159,21 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_voice),
-            color: const Color(0xFF7C4DFF),
+            color: const Color(0xFFE53935),
             onPressed: _showConfigDialog,
             tooltip: 'Configurar voz',
           ),
           if (_isReading)
             IconButton(
               icon: Icon(_isPaused ? Icons.play_arrow : Icons.pause),
-              color: const Color(0xFF7C4DFF),
+              color: const Color(0xFFE53935),
               onPressed: _toggleReadAll,
               tooltip: _isPaused ? 'Reanudar' : 'Pausar',
             ),
           if (_isReading)
             IconButton(
               icon: const Icon(Icons.stop_circle),
-              color: Colors.red,
+              color: const Color(0xFFD32F2F),
               onPressed: _stopReading,
               tooltip: 'Detener lectura',
             ),
@@ -198,7 +202,7 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
                       duration: const Duration(milliseconds: 300),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: _isPaused ? Colors.orange : const Color(0xFF7C4DFF),
+                        color: _isPaused ? const Color(0xFFFF6F00) : const Color(0xFFE53935),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),
@@ -283,7 +287,7 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                      color: const Color(0xFFE53935).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -291,7 +295,7 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF7C4DFF),
+                        color: Color(0xFFE53935),
                       ),
                     ),
                   ),
@@ -352,7 +356,7 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.volume_up, size: 20),
-                        color: const Color(0xFF7C4DFF),
+                        color: const Color(0xFFE53935),
                         onPressed: () => _readSection('Hoja de Vida', widget.candidato.hojaVida),
                         tooltip: 'Leer hoja de vida',
                       ),
@@ -394,7 +398,7 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.volume_up, size: 20),
-                        color: const Color(0xFF7C4DFF),
+                        color: const Color(0xFFE53935),
                         onPressed: () => _readSection('Biografía', widget.candidato.biografia),
                         tooltip: 'Leer biografía',
                       ),
@@ -447,7 +451,7 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
                   FloatingActionButton(
                     heroTag: 'pause',
                     onPressed: _toggleReadAll,
-                    backgroundColor: _isPaused ? Colors.green : const Color(0xFF7C4DFF),
+                    backgroundColor: _isPaused ? const Color(0xFF4CAF50) : const Color(0xFFE53935),
                     tooltip: _isPaused ? 'Reanudar' : 'Pausar',
                     child: Icon(_isPaused ? Icons.play_arrow : Icons.pause),
                   ),
@@ -455,7 +459,7 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
                   FloatingActionButton(
                     heroTag: 'stop',
                     onPressed: _stopReading,
-                    backgroundColor: Colors.red,
+                    backgroundColor: const Color(0xFFD32F2F),
                     tooltip: 'Detener',
                     child: const Icon(Icons.stop),
                   ),
@@ -464,7 +468,7 @@ class _CandidatoDetalleScreenState extends State<CandidatoDetalleScreen> {
             : FloatingActionButton.extended(
                 key: const ValueKey('not-reading'),
                 onPressed: _toggleReadAll,
-                backgroundColor: const Color(0xFF7C4DFF),
+                backgroundColor: const Color(0xFFE53935),
                 icon: const Icon(Icons.volume_up),
                 label: const Text('Leer todo'),
               ),

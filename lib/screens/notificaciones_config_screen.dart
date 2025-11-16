@@ -63,7 +63,11 @@ class _NotificacionesConfigScreenState
         elevation: 0,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE53935)),
+              ),
+            )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -73,20 +77,35 @@ class _NotificacionesConfigScreenState
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.blue[50],
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.blue[200]!),
+                      color: const Color(0xFFE53935).withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: const Color(0xFFE53935).withOpacity(0.2),
+                        width: 1.5,
+                      ),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline, color: Colors.blue[700]),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE53935).withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.info_outline,
+                            color: Color(0xFFE53935),
+                            size: 20,
+                          ),
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             'Configura cómo deseas recibir información sobre el proceso electoral',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.blue[900],
+                              color: Colors.grey[800],
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
@@ -154,16 +173,30 @@ class _NotificacionesConfigScreenState
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.grey[200]!,
+                        width: 1.5,
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.lightbulb_outline,
-                                color: Colors.grey[700], size: 20),
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE53935).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.lightbulb_outline,
+                                color: Color(0xFFE53935),
+                                size: 20,
+                              ),
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               'Tipos de notificaciones',
@@ -196,7 +229,7 @@ class _NotificacionesConfigScreenState
       style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF7C4DFF),
+        color: Color(0xFFE53935),
       ),
     );
   }
@@ -213,14 +246,25 @@ class _NotificacionesConfigScreenState
     return Container(
       decoration: BoxDecoration(
         color: isDisabled ? Colors.grey[100] : Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDisabled ? Colors.grey[300]! : Colors.grey[300]!,
+          color: isDisabled 
+              ? Colors.grey[300]! 
+              : const Color(0xFFE53935).withOpacity(0.2),
+          width: 1.5,
         ),
+        boxShadow: isDisabled ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: SwitchListTile(
         value: value,
         onChanged: onChanged,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         title: Text(
           title,
           style: TextStyle(
@@ -236,11 +280,22 @@ class _NotificacionesConfigScreenState
             color: isDisabled ? Colors.grey[400] : Colors.grey[600],
           ),
         ),
-        secondary: Icon(
-          icon,
-          color: isDisabled ? Colors.grey[400] : const Color(0xFF7C4DFF),
+        secondary: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: isDisabled 
+                ? Colors.grey[200] 
+                : const Color(0xFFE53935).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            icon,
+            color: isDisabled ? Colors.grey[400] : const Color(0xFFE53935),
+            size: 24,
+          ),
         ),
-        activeColor: const Color(0xFF7C4DFF),
+        activeColor: const Color(0xFFE53935),
+        activeTrackColor: const Color(0xFFE53935).withOpacity(0.5),
       ),
     );
   }
@@ -251,20 +306,21 @@ class _NotificacionesConfigScreenState
       child: Row(
         children: [
           Container(
-            width: 4,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey[600],
+            width: 6,
+            height: 6,
+            decoration: const BoxDecoration(
+              color: Color(0xFFE53935),
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
               style: TextStyle(
                 fontSize: 13,
                 color: Colors.grey[700],
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

@@ -66,7 +66,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: const Color(0xFFE53935),
               foregroundColor: Colors.white,
             ),
             child: Text(Translations.get('logout', idioma)),
@@ -91,20 +91,24 @@ class _PerfilScreenState extends State<PerfilScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFE53935),
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
           Translations.get('myProfile', idioma),
           style: const TextStyle(
-            color: Colors.black,
+            color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE53935)),
+              ),
+            )
           : SafeArea(
               child: SingleChildScrollView(
                 child: Padding(
@@ -312,35 +316,51 @@ class _PerfilScreenState extends State<PerfilScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
+          color: const Color(0xFFE53935).withOpacity(0.2),
+          width: 1.5,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: ListTile(
-        leading: Icon(
-          icon,
-          color: isDestructive ? const Color(0xFFE53935) : const Color(0xFFE53935),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE53935).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            icon,
+            color: const Color(0xFFE53935),
+            size: 24,
+          ),
         ),
         title: Text(
           title,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: isDestructive ? Colors.red : Colors.black87,
+            color: isDestructive ? const Color(0xFFE53935) : Colors.black87,
           ),
         ),
         subtitle: Text(
           subtitle,
           style: TextStyle(
             fontSize: 13,
-            color: isDestructive ? Colors.red[300] : Colors.grey[600],
+            color: isDestructive ? const Color(0xFFE53935).withOpacity(0.7) : Colors.grey[600],
           ),
         ),
         trailing: Icon(
           Icons.chevron_right,
-          color: Colors.grey[400],
+          color: const Color(0xFFE53935).withOpacity(0.5),
         ),
         onTap: onTap,
       ),

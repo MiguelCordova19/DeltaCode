@@ -50,11 +50,11 @@ class TtsServiceAdvanced {
       // Esperar un momento para que el motor se vincule
       await Future.delayed(const Duration(milliseconds: 500));
       
-      // Aplicar configuración
-      await applyConfig(_config);
-      
-      // Cargar voces disponibles
+      // Cargar voces disponibles primero
       await loadAvailableVoices();
+      
+      // Aplicar configuración (ahora con voz femenina si está disponible)
+      await applyConfig(_config);
       
       print('TTS: Inicialización completada');
     } catch (e) {
@@ -83,6 +83,26 @@ class TtsServiceAdvanced {
           if (countryCompare != 0) return countryCompare;
           return a.displayName.compareTo(b.displayName);
         });
+        
+        // Si no hay voz seleccionada, seleccionar automáticamente una voz femenina en español
+        if (_config.selectedVoice == null && _availableVoices.isNotEmpty) {
+          // Buscar una voz femenina en español
+          final femaleVoice = _availableVoices.firstWhere(
+            (voice) => voice.name.toLowerCase().contains('female'),
+            orElse: () => _availableVoices.first,
+          );
+          
+          // Actualizar configuración con la voz femenina
+          _config = _config.copyWith(selectedVoice: femaleVoice.name);
+          
+          // Aplicar la voz
+          await _flutterTts.setVoice({
+            "name": femaleVoice.name,
+            "locale": femaleVoice.locale,
+          });
+          
+          print('TTS: Voz femenina por defecto configurada - ${femaleVoice.name}');
+        }
       }
     } catch (e) {
       print('Error al cargar voces: $e');

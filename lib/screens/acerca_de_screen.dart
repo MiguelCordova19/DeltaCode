@@ -85,14 +85,14 @@ class AcercaDeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                color: const Color(0xFFE53935).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Text(
                 'Versión 1.0.0',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFF7C4DFF),
+                  color: Color(0xFFE53935),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -103,9 +103,12 @@ class AcercaDeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: const Color(0xFFE53935).withOpacity(0.05),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(
+                  color: const Color(0xFFE53935).withOpacity(0.2),
+                  width: 1.5,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,22 +190,25 @@ class AcercaDeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.orange[50],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.orange[200]!),
+                color: const Color(0xFFFF6F00).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: const Color(0xFFFF6F00).withOpacity(0.3),
+                  width: 1.5,
+                ),
               ),
               child: Column(
                 children: [
                   const Row(
                     children: [
-                      Icon(Icons.warning_amber, color: Colors.orange),
+                      Icon(Icons.warning_amber, color: Color(0xFFFF6F00)),
                       SizedBox(width: 8),
                       Text(
                         'Herramientas de Desarrollo',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.orange,
+                          color: Color(0xFFFF6F00),
                         ),
                       ),
                     ],
@@ -227,7 +233,7 @@ class AcercaDeScreen extends StatelessWidget {
                               ElevatedButton(
                                 onPressed: () => Navigator.pop(context, true),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
+                                  backgroundColor: const Color(0xFFD32F2F),
                                 ),
                                 child: const Text('Resetear'),
                               ),
@@ -250,7 +256,7 @@ class AcercaDeScreen extends StatelessWidget {
                       icon: const Icon(Icons.refresh),
                       label: const Text('Resetear Datos de Gamificación'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
+                        backgroundColor: const Color(0xFFFF6F00),
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -264,8 +270,12 @@ class AcercaDeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C4DFF).withOpacity(0.05),
+                color: const Color(0xFFE53935).withOpacity(0.05),
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: const Color(0xFFE53935).withOpacity(0.2),
+                  width: 1.5,
+                ),
               ),
               child: Column(
                 children: [
@@ -282,7 +292,7 @@ class AcercaDeScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFFE53935),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -311,7 +321,7 @@ class AcercaDeScreen extends StatelessWidget {
         style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF7C4DFF),
+          color: Color(0xFFE53935),
         ),
       ),
     );
@@ -326,20 +336,30 @@ class AcercaDeScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFE53935).withOpacity(0.2),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFF7C4DFF).withOpacity(0.1),
+              color: const Color(0xFFE53935).withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               icon,
-              color: const Color(0xFF7C4DFF),
+              color: const Color(0xFFE53935),
               size: 24,
             ),
           ),
@@ -379,17 +399,34 @@ class AcercaDeScreen extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFE53935).withOpacity(0.2),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF7C4DFF)),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE53935).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: const Color(0xFFE53935), size: 20),
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -413,7 +450,11 @@ class AcercaDeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.open_in_new, color: Colors.grey[400], size: 20),
+            Icon(
+              Icons.open_in_new,
+              color: const Color(0xFFE53935).withOpacity(0.5),
+              size: 20,
+            ),
           ],
         ),
       ),

@@ -38,20 +38,35 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.blue[200]!),
+                color: const Color(0xFFE53935).withOpacity(0.08),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: const Color(0xFFE53935).withOpacity(0.2),
+                  width: 1.5,
+                ),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.shield_outlined, color: Colors.blue[700], size: 24),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE53935).withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.shield_outlined,
+                      color: Color(0xFFE53935),
+                      size: 20,
+                    ),
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'Tu privacidad es importante. Controla cómo se usan tus datos.',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.blue[900],
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -101,7 +116,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
               icon: Icons.download_outlined,
               title: 'Descargar mis datos',
               subtitle: 'Obtén una copia de tu información personal',
-              color: const Color(0xFF7C4DFF),
+              color: const Color(0xFFE53935),
               onTap: () => _descargarDatos(context),
             ),
             const SizedBox(height: 12),
@@ -109,7 +124,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
               icon: Icons.delete_outline,
               title: 'Eliminar historial',
               subtitle: 'Borra tu historial de búsquedas y navegación',
-              color: Colors.orange,
+              color: const Color(0xFFFF6F00),
               onTap: () => _eliminarHistorial(context),
             ),
             const SizedBox(height: 12),
@@ -117,7 +132,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
               icon: Icons.delete_forever,
               title: 'Eliminar mi cuenta',
               subtitle: 'Elimina permanentemente todos tus datos',
-              color: Colors.red,
+              color: const Color(0xFFD32F2F),
               onTap: () => _eliminarCuenta(context),
             ),
             const SizedBox(height: 24),
@@ -179,7 +194,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
       style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF7C4DFF),
+        color: Color(0xFFE53935),
       ),
     );
   }
@@ -194,12 +209,23 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFE53935).withOpacity(0.2),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: SwitchListTile(
         value: value,
         onChanged: onChanged,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         title: Text(
           title,
           style: const TextStyle(
@@ -214,8 +240,20 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
             color: Colors.grey[600],
           ),
         ),
-        secondary: Icon(icon, color: const Color(0xFF7C4DFF)),
-        activeColor: const Color(0xFF7C4DFF),
+        secondary: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE53935).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            icon,
+            color: const Color(0xFFE53935),
+            size: 24,
+          ),
+        ),
+        activeColor: const Color(0xFFE53935),
+        activeTrackColor: const Color(0xFFE53935).withOpacity(0.5),
       ),
     );
   }
@@ -229,13 +267,23 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -270,7 +318,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey[400]),
+            Icon(Icons.chevron_right, color: color.withOpacity(0.5)),
           ],
         ),
       ),
@@ -286,13 +334,23 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withOpacity(0.3),
+          width: 1.5,
+        ),
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 24),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -329,17 +387,34 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFE53935).withOpacity(0.2),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF7C4DFF)),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE53935).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: const Color(0xFFE53935), size: 24),
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
@@ -350,7 +425,10 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
                 ),
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey[400]),
+            Icon(
+              Icons.chevron_right,
+              color: const Color(0xFFE53935).withOpacity(0.5),
+            ),
           ],
         ),
       ),
@@ -364,7 +442,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
       builder: (context) => AlertDialog(
         title: const Row(
           children: [
-            Icon(Icons.download, color: Color(0xFF7C4DFF)),
+            Icon(Icons.download, color: Color(0xFFE53935)),
             SizedBox(width: 12),
             Text('Descargar Datos'),
           ],
@@ -394,7 +472,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF7C4DFF),
+              backgroundColor: const Color(0xFFE53935),
             ),
             child: const Text('Descargar'),
           ),
@@ -409,7 +487,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
       builder: (context) => AlertDialog(
         title: const Row(
           children: [
-            Icon(Icons.warning_amber, color: Colors.orange),
+            Icon(Icons.warning_amber, color: Color(0xFFFF6F00)),
             SizedBox(width: 12),
             Text('Eliminar Historial'),
           ],
@@ -426,7 +504,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
+              backgroundColor: const Color(0xFFFF6F00),
             ),
             child: const Text('Eliminar'),
           ),
@@ -450,7 +528,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
       builder: (context) => AlertDialog(
         title: const Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.red),
+            Icon(Icons.error_outline, color: Color(0xFFD32F2F)),
             SizedBox(width: 12),
             Text('Eliminar Cuenta'),
           ],
@@ -473,7 +551,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: const Color(0xFFD32F2F),
             ),
             child: const Text('Eliminar Cuenta'),
           ),

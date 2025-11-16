@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen_content.dart';
 import 'chat_list_screen.dart';
+import 'candidatos_main_screen.dart';
 import 'calendario_electoral_screen.dart';
 import 'curiosidades_screen.dart';
 import 'perfil_screen.dart';
@@ -22,6 +23,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
   final List<Widget> _screens = [
     const HomeScreenContent(),
     const ChatListScreen(),
+    const CandidatosMainScreen(),
     const CalendarioElectoralScreen(),
     const CuriosidadesScreen(),
     const PerfilScreen(),
@@ -33,7 +35,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
     
     // Controladores para los iconos del menú
     _controllers = List.generate(
-      5,
+      6,
       (index) => AnimationController(
         duration: const Duration(milliseconds: 300),
         vsync: this,
@@ -131,9 +133,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
               children: [
                 _buildNavItem(Icons.home_outlined, 0),
                 _buildNavItem(Icons.chat_bubble_outline, 1),
-                _buildNavItem(Icons.calendar_month_outlined, 2),
-                _buildNavItem(Icons.auto_stories, 3),
-                _buildNavItem(Icons.person_outline, 4),
+                _buildNavItem(Icons.people_outline, 2),
+                _buildNavItem(Icons.calendar_month_outlined, 3),
+                _buildNavItem(Icons.auto_stories, 4),
+                _buildNavItem(Icons.settings_outlined, 5),
               ],
             ),
           ),
@@ -149,17 +152,19 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
     final labelsEs = [
       'Inicio',
       'Chat',
+      'Candidatos',
       'Calendario',
       'Curiosidades',
-      'Perfil',
+      'Configuración',
     ];
     
     final labelsQu = [
       'Qallariy',
       'Rimanakuy',
+      'Akllasqakuna',
       'Punchaw Qillqa',
       'Yachaykuna',
-      'Ñuqa',
+      'Allichay',
     ];
     
     // Detectar idioma actual (puedes mejorarlo con Provider si lo necesitas)

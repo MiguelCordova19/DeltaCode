@@ -455,76 +455,158 @@ class _RecompensasScreenState extends State<RecompensasScreen>
   }
 
   Widget _buildLogrosTab() {
-    if (_puntosUsuario!.logros.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              '🏆',
-              style: TextStyle(fontSize: 64),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Aún no tienes logros',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Completa tutoriales y lee planes\npara ganar logros',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[500],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+    // Lista de todos los logros disponibles
+    final logrosDisponibles = [
+      {
+        'id': 'descubriendo_historia_completo',
+        'icono': '🎓',
+        'titulo': 'Descubriendo la Historia',
+        'descripcion': 'Descubre todas las historias presidenciales del Perú (2000-2025)',
+        'puntos': 100,
+        'requisito': 'Visita las 11 historias en la sección "Presidentes del Perú"',
+      },
+      {
+        'id': 'primer_plan_leido',
+        'icono': '📖',
+        'titulo': 'Primer Plan Leído',
+        'descripcion': 'Lee tu primer plan de gobierno completo',
+        'puntos': 100,
+        'requisito': 'Lee un plan de gobierno en la sección "Planes de Gobierno"',
+      },
+      {
+        'id': 'explorador_politico',
+        'icono': '🔍',
+        'titulo': 'Explorador Político',
+        'descripcion': 'Conoce a tu primer candidato',
+        'puntos': 25,
+        'requisito': 'Visita el perfil de un candidato en "Precandidatos"',
+      },
+      {
+        'id': 'ciudadano_informado',
+        'icono': '📰',
+        'titulo': 'Ciudadano Informado',
+        'descripcion': 'Lee tu primera noticia electoral',
+        'puntos': 15,
+        'requisito': 'Lee una noticia en la sección "Noticias"',
+      },
+      {
+        'id': 'tutorial_completado',
+        'icono': '✅',
+        'titulo': 'Aprendiz Electoral',
+        'descripcion': 'Completa tu primer tutorial',
+        'puntos': 50,
+        'requisito': 'Completa un tutorial en la sección "Tutoriales"',
+      },
+    ];
+
+    // Verificar qué logros están desbloqueados
+    final logrosDesbloqueados = _puntosUsuario!.logros.map((l) => l.id).toSet();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
+          // Estadísticas
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFE53935), Color(0xFFD32F2F)],
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      '${logrosDesbloqueados.length}',
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Text(
+                      'Desbloqueados',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.white30,
+                ),
+                Column(
+                  children: [
+                    Text(
+                      '${logrosDisponibles.length - logrosDesbloqueados.length}',
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Text(
+                      'Por desbloquear',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(height: 24),
+          
           // Grid de logros hexagonales
           Wrap(
             spacing: 16,
             runSpacing: 20,
             alignment: WrapAlignment.center,
-            children: _puntosUsuario!.logros.map((logro) {
+            children: logrosDisponibles.map((logro) {
+              final estaDesbloqueado = logrosDesbloqueados.contains(logro['id']);
               return _buildHexagonalBadge(
-                icono: logro.icono,
-                titulo: logro.titulo,
-                puntos: logro.puntos,
-                completado: true,
+                icono: logro['icono'] as String,
+                titulo: logro['titulo'] as String,
+                descripcion: logro['descripcion'] as String,
+                requisito: logro['requisito'] as String,
+                puntos: logro['puntos'] as int,
+                completado: estaDesbloqueado,
               );
             }).toList(),
           ),
           
           // Mensaje motivacional
-          if (_puntosUsuario!.logros.length < 5) ...[
+          if (logrosDesbloqueados.length < logrosDisponibles.length) ...[
             const SizedBox(height: 32),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
+                color: const Color(0xFFE53935).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.blue[200]!),
+                border: Border.all(
+                  color: const Color(0xFFE53935).withOpacity(0.3),
+                ),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.emoji_events, color: Colors.blue[700], size: 24),
+                  const Icon(Icons.emoji_events, color: Color(0xFFE53935), size: 24),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       '¡Sigue explorando para desbloquear más logros!',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.blue[900],
+                        color: Colors.grey[800],
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -541,11 +623,13 @@ class _RecompensasScreenState extends State<RecompensasScreen>
   Widget _buildHexagonalBadge({
     required String icono,
     required String titulo,
+    required String descripcion,
+    required String requisito,
     required int puntos,
     required bool completado,
   }) {
     return GestureDetector(
-      onTap: completado ? () => _mostrarDetalleLogro(icono, titulo, puntos) : null,
+      onTap: () => _mostrarDetalleLogro(icono, titulo, descripcion, requisito, puntos, completado),
       child: Column(
         children: [
           Stack(
@@ -573,46 +657,48 @@ class _RecompensasScreenState extends State<RecompensasScreen>
                 ),
               ),
               // Ícono
-              Text(
-                completado ? icono : '🔒',
-                style: const TextStyle(fontSize: 36),
+              Opacity(
+                opacity: completado ? 1.0 : 0.5,
+                child: Text(
+                  completado ? icono : '🔒',
+                  style: const TextStyle(fontSize: 36),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           // Puntos
-          if (completado)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.amber,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    '🪙',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '+$puntos',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: completado ? Colors.amber : Colors.grey[400],
+              borderRadius: BorderRadius.circular(12),
             ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '🪙',
+                  style: TextStyle(fontSize: 12),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '+$puntos',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  void _mostrarDetalleLogro(String icono, String titulo, int puntos) {
+  void _mostrarDetalleLogro(String icono, String titulo, String descripcion, String requisito, int puntos, bool completado) {
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -628,15 +714,24 @@ class _RecompensasScreenState extends State<RecompensasScreen>
                   CustomPaint(
                     size: const Size(120, 120),
                     painter: HexagonPainter(
-                      color: const LinearGradient(
-                        colors: [Color(0xFFE53935), Color(0xFFD32F2F)],
-                      ),
-                      shadowColor: const Color(0xFFE53935).withOpacity(0.4),
+                      color: completado
+                          ? const LinearGradient(
+                              colors: [Color(0xFFE53935), Color(0xFFD32F2F)],
+                            )
+                          : LinearGradient(
+                              colors: [Colors.grey[300]!, Colors.grey[400]!],
+                            ),
+                      shadowColor: completado
+                          ? const Color(0xFFE53935).withOpacity(0.4)
+                          : Colors.transparent,
                     ),
                   ),
-                  Text(
-                    icono,
-                    style: const TextStyle(fontSize: 56),
+                  Opacity(
+                    opacity: completado ? 1.0 : 0.5,
+                    child: Text(
+                      completado ? icono : '🔒',
+                      style: const TextStyle(fontSize: 56),
+                    ),
                   ),
                 ],
               ),
@@ -649,11 +744,22 @@ class _RecompensasScreenState extends State<RecompensasScreen>
                 ),
                 textAlign: TextAlign.center,
               ),
+              const SizedBox(height: 8),
+              Text(
+                descripcion,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 16),
+              
+              // Recompensa
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.amber,
+                  color: completado ? Colors.amber : Colors.grey[400],
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -675,11 +781,54 @@ class _RecompensasScreenState extends State<RecompensasScreen>
                   ],
                 ),
               ),
+              
+              // Requisito (solo si no está completado)
+              if (!completado) ...[
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE53935).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFFE53935).withOpacity(0.3),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.info_outline, color: Color(0xFFE53935), size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Cómo desbloquear:',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFE53935),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        requisito,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[700],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE53935),
+                  backgroundColor: completado ? const Color(0xFFE53935) : Colors.grey[400],
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
                 child: const Text(

@@ -184,6 +184,11 @@ class Candidato {
           'hojaVida': '• Más de 13 años de trayectoria en el Partido Aprista Peruano\n• Afiliado al APRA desde 2008 hasta 2021\n• Reafiliado al partido desde el 7 de septiembre de 2022\n• Afiliado válido del Partido Aprista Peruano',
           'biografia': 'Magno Alfonso Mendoza Rodríguez es un ciudadano con una larga trayectoria en el Partido Aprista Peruano. Nació el 20 de enero de 1966 y mantiene su residencia en el Cercado de Lima.\n\nSu historial político se centra en su militancia en el APRA. Fue afiliado al partido desde 2008 hasta su cancelación en 2021, y se reafilió como Afiliado Válido en la nueva inscripción del partido el 7 de septiembre de 2022. Su experiencia política se contabiliza en más de 13 años dentro de la organización. Actualmente, es un afiliado válido sin cargos directivos vigentes en el partido.',
         },
+        'Presidente_2': {
+          'nombre': 'Nery Juana Quiroz Betetta',
+          'hojaVida': '• Afiliada al Partido Aprista Peruano desde el 7 de septiembre de 2022\n• Reside en el distrito de San Antonio, provincia de Huarochirí, región Lima',
+          'biografia': 'Nery Juana Quiroz Betetta, nacida el 29 de octubre de 1980, es una ciudadana con afiliación al Partido Aprista Peruano. Reside en el distrito de San Antonio, provincia de Huarochirí, en la región Lima.\n\nSu trayectoria política se centra en su militancia en el APRA, a la cual se afilió el 7 de septiembre de 2022. La organización fue inscrita el 24 de marzo de 2023. No registra afiliaciones anteriores a otros partidos políticos ni ocupa cargos de representación o dirección dentro del partido.',
+        },
       },
       
       // Agrega más partidos aquí siguiendo el mismo formato...

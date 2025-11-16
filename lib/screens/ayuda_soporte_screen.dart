@@ -108,13 +108,20 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
-                    const Color(0xFF7C4DFF),
-                    const Color(0xFF7C4DFF).withOpacity(0.8),
+                    Color(0xFFE53935),
+                    Color(0xFFD32F2F),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFE53935).withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -168,7 +175,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
                   child: _buildQuickAction(
                     icon: Icons.phone,
                     label: 'Llamar',
-                    color: Colors.green,
+                    color: const Color(0xFF4CAF50),
                     onTap: () => _mostrarOpcionesLlamada(context),
                   ),
                 ),
@@ -177,7 +184,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
                   child: _buildQuickAction(
                     icon: Icons.email,
                     label: 'Email',
-                    color: Colors.blue,
+                    color: const Color(0xFFE53935),
                     onTap: () => _enviarEmail('soporte@elecciones2026.pe'),
                   ),
                 ),
@@ -186,7 +193,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
                   child: _buildQuickAction(
                     icon: Icons.chat,
                     label: 'Chat',
-                    color: Colors.purple,
+                    color: const Color(0xFFFF6F00),
                     onTap: () => _mostrarProximamente(context),
                   ),
                 ),
@@ -213,7 +220,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
               icon: Icons.how_to_vote,
               title: 'Cómo votar correctamente',
               description: 'Aprende el proceso paso a paso',
-              color: const Color(0xFF7C4DFF),
+              color: const Color(0xFFE53935),
               onTap: () => _mostrarTutorial(context, 'votar'),
             ),
             const SizedBox(height: 12),
@@ -221,7 +228,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
               icon: Icons.location_on,
               title: 'Encontrar mi local de votación',
               description: 'Ubica tu local asignado',
-              color: Colors.blue,
+              color: const Color(0xFFD32F2F),
               onTap: () => _mostrarTutorial(context, 'local'),
             ),
             const SizedBox(height: 12),
@@ -229,7 +236,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
               icon: Icons.people,
               title: 'Ser miembro de mesa',
               description: 'Conoce tus responsabilidades',
-              color: Colors.orange,
+              color: const Color(0xFFFF6F00),
               onTap: () => _mostrarTutorial(context, 'miembro'),
             ),
             const SizedBox(height: 24),
@@ -287,7 +294,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
       style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF7C4DFF),
+        color: Color(0xFFE53935),
       ),
     );
   }
@@ -300,13 +307,23 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           children: [
@@ -333,10 +350,18 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isExpanded ? const Color(0xFF7C4DFF) : Colors.grey[300]!,
+          color: isExpanded ? const Color(0xFFE53935) : Colors.grey[300]!,
+          width: isExpanded ? 2 : 1.5,
         ),
+        boxShadow: isExpanded ? [
+          BoxShadow(
+            color: const Color(0xFFE53935).withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ] : null,
       ),
       child: Column(
         children: [
@@ -346,7 +371,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
                 _expandedFaqIndex = isExpanded ? null : index;
               });
             },
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
@@ -354,12 +379,12 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                      color: const Color(0xFFE53935).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
                       Icons.help_outline,
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFFE53935),
                       size: 20,
                     ),
                   ),
@@ -375,7 +400,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
                   ),
                   Icon(
                     isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: Colors.grey[600],
+                    color: const Color(0xFFE53935),
                   ),
                 ],
               ),
@@ -407,13 +432,23 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -465,8 +500,18 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFE53935).withOpacity(0.2),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -495,7 +540,10 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
                   icon: const Icon(Icons.phone, size: 18),
                   label: Text(telefono),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.green,
+                    foregroundColor: const Color(0xFF4CAF50),
+                    side: BorderSide(
+                      color: const Color(0xFF4CAF50).withOpacity(0.5),
+                    ),
                   ),
                 ),
               ),
@@ -506,7 +554,10 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
                   icon: const Icon(Icons.language, size: 18),
                   label: const Text('Web'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF7C4DFF),
+                    foregroundColor: const Color(0xFFE53935),
+                    side: BorderSide(
+                      color: const Color(0xFFE53935).withOpacity(0.5),
+                    ),
                   ),
                 ),
               ),
@@ -525,17 +576,34 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFE53935).withOpacity(0.2),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF7C4DFF), size: 28),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE53935).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: const Color(0xFFE53935), size: 24),
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -559,7 +627,10 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey[400]),
+            Icon(
+              Icons.chevron_right,
+              color: const Color(0xFFE53935).withOpacity(0.5),
+            ),
           ],
         ),
       ),
@@ -586,7 +657,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
             ),
             const SizedBox(height: 20),
             ListTile(
-              leading: const Icon(Icons.phone, color: Colors.green),
+              leading: const Icon(Icons.phone, color: Color(0xFF4CAF50)),
               title: const Text('JNE'),
               subtitle: const Text('311-1700'),
               onTap: () {
@@ -595,7 +666,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.phone, color: Colors.green),
+              leading: const Icon(Icons.phone, color: Color(0xFF4CAF50)),
               title: const Text('ONPE'),
               subtitle: const Text('311-4700'),
               onTap: () {
@@ -604,7 +675,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.phone, color: Colors.green),
+              leading: const Icon(Icons.phone, color: Color(0xFF4CAF50)),
               title: const Text('RENIEC'),
               subtitle: const Text('315-2700'),
               onTap: () {
@@ -746,7 +817,7 @@ Recibirás:
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF7C4DFF),
+              backgroundColor: const Color(0xFFE53935),
             ),
             child: const Text('Enviar'),
           ),
