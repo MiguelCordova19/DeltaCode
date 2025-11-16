@@ -39,9 +39,9 @@ class _CalendarioElectoralScreenState extends State<CalendarioElectoralScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFA4A4),
+      backgroundColor: const Color(0xFFE53935),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFA4A4),
+        backgroundColor: const Color(0xFFE53935),
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
@@ -63,7 +63,7 @@ class _CalendarioElectoralScreenState extends State<CalendarioElectoralScreen>
         children: [
           // Header con tabs
           Container(
-            color: const Color(0xFFFFA4A4),
+            color: const Color(0xFFE53935),
             child: Column(
               children: [
                 Padding(
@@ -174,15 +174,15 @@ class _CalendarioElectoralScreenState extends State<CalendarioElectoralScreen>
           },
           calendarStyle: CalendarStyle(
             todayDecoration: BoxDecoration(
-              color: const Color(0xFF7C4DFF),
+              color: const Color(0xFFE53935),
               shape: BoxShape.circle,
             ),
             selectedDecoration: BoxDecoration(
-              color: const Color(0xFFFFA4A4),
+              color: const Color(0xFFEF5350),
               shape: BoxShape.circle,
             ),
             markerDecoration: BoxDecoration(
-              color: const Color(0xFFFF6B6B),
+              color: const Color(0xFFD32F2F),
               shape: BoxShape.circle,
             ),
           ),
@@ -276,7 +276,7 @@ class _CalendarioElectoralScreenState extends State<CalendarioElectoralScreen>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.red,
+                    color: const Color(0xFFE53935),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
@@ -353,19 +353,19 @@ class _CalendarioElectoralScreenState extends State<CalendarioElectoralScreen>
   Color _getColorPorTipo(TipoEvento tipo) {
     switch (tipo) {
       case TipoEvento.eleccion:
-        return const Color(0xFFFF6B6B);
+        return const Color(0xFFE53935); // Rojo principal
       case TipoEvento.miembroMesa:
-        return const Color(0xFF4ECDC4);
+        return const Color(0xFFD32F2F); // Rojo oscuro
       case TipoEvento.inscripcion:
-        return const Color(0xFF7C4DFF);
+        return const Color(0xFFEF5350); // Rojo claro
       case TipoEvento.debate:
-        return const Color(0xFFFF9800);
+        return const Color(0xFFE57373); // Rojo más claro
       case TipoEvento.propaganda:
-        return const Color(0xFF2196F3);
+        return const Color(0xFFB71C1C); // Rojo muy oscuro
       case TipoEvento.capacitacion:
-        return const Color(0xFF4CAF50);
+        return const Color(0xFFC62828); // Rojo medio oscuro
       case TipoEvento.sorteo:
-        return const Color(0xFFE91E63);
+        return const Color(0xFFFF5252); // Rojo brillante
       default:
         return Colors.grey;
     }

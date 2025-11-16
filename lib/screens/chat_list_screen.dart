@@ -154,18 +154,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         ],
                       ),
                     ),
-                    // Botón de nuevo chat
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.add, color: Colors.white),
-                        onPressed: _crearNuevaConversacion,
-                        tooltip: 'Nueva conversación',
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -233,23 +221,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Inicia una nueva conversación con el asistente electoral',
+              'Inicia una nueva conversación con el asistente electoral.\nToca el botón + abajo para comenzar.',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[600],
               ),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _crearNuevaConversacion,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE53935),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-              icon: const Icon(Icons.add),
-              label: const Text('Nueva conversación'),
             ),
           ],
         ),

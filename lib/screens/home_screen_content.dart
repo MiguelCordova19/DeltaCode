@@ -9,7 +9,7 @@ import 'login_screen.dart';
 import 'noticias_screen.dart';
 import 'locales_votacion_screen.dart';
 import 'informacion_electoral_screen.dart';
-import 'calendario_electoral_screen.dart';
+import 'tutoriales_screen.dart';
 
 class HomeScreenContent extends StatefulWidget {
   const HomeScreenContent({super.key});
@@ -37,7 +37,477 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
         _usuario = usuario;
         _isLoading = false;
       });
+      
+      // Mostrar diálogo de bienvenida con local de votación
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _mostrarDialogoBienvenida();
+      });
     }
+  }
+
+  Future<void> _mostrarDialogoBienvenida() async {
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 400),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: [
+              // Sombra principal (más oscura y cercana)
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 30,
+                offset: const Offset(0, 15),
+                spreadRadius: -5,
+              ),
+              // Sombra secundaria (más suave y lejana)
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 60,
+                offset: const Offset(0, 30),
+                spreadRadius: -10,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Botón cerrar con efecto 3D
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          if (mounted) Navigator.pop(context);
+                        },
+                        borderRadius: BorderRadius.circular(20),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Icon(
+                            Icons.close,
+                            size: 24,
+                            color: Color(0xFF2D2D2D),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Título con efecto 3D
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Text(
+                  '¡Bienvenido, ${_usuario?.nombreCompleto?.split(' ')[0] ?? 'Ciudadano'}!',
+                  style: TextStyle(
+                    color: const Color(0xFF2D2D2D),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withOpacity(0.1),
+                        offset: const Offset(0, 2),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Ícono 3D con sombras múltiples
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFFE53935),
+                      Color(0xFFD32F2F),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [
+                    // Sombra principal del ícono
+                    BoxShadow(
+                      color: const Color(0xFFE53935).withOpacity(0.4),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                      spreadRadius: -5,
+                    ),
+                    // Sombra de profundidad
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 30,
+                      offset: const Offset(0, 15),
+                      spreadRadius: -8,
+                    ),
+                    // Highlight superior
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.1),
+                      blurRadius: 0,
+                      offset: const Offset(0, -2),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.how_to_vote_rounded,
+                  size: 64,
+                  color: Colors.white,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Subtítulo
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Text(
+                  'Tu Local de Votación',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Card de información con efecto 3D elevado
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      // Sombra principal
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                        spreadRadius: -4,
+                      ),
+                      // Sombra de profundidad
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 40,
+                        offset: const Offset(0, 16),
+                        spreadRadius: -8,
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        // Ícono de ubicación con efecto 3D
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xFFE53935),
+                                Color(0xFFD32F2F),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFE53935).withOpacity(0.3),
+                                blurRadius: 12,
+                                offset: const Offset(0, 6),
+                                spreadRadius: -3,
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.location_on_rounded,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'I.E. San Pedro',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF2D2D2D),
+                            letterSpacing: -0.3,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Av. Pardo 123, Chimbote',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        // Badge de mesa con efecto 3D
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF5F5F5),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                                spreadRadius: -2,
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.table_chart_rounded,
+                                color: Colors.grey[700],
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Mesa: 001234',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Mensaje informativo con efecto sutil
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.blue.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.info_rounded,
+                          color: Colors.blue,
+                          size: 18,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Consulta más detalles en "Mi Local"',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              // Botones con efecto 3D
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  children: [
+                    // Botón Cerrar con efecto 3D sutil
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 12,
+                              offset: const Offset(0, 6),
+                              spreadRadius: -4,
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          child: InkWell(
+                            onTap: () {
+                              if (mounted) Navigator.pop(context);
+                            },
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: const Color(0xFFE53935).withOpacity(0.3),
+                                  width: 2,
+                                ),
+                              ),
+                              child: const Text(
+                                'Cerrar',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFFE53935),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Botón Ver Detalles con efecto 3D pronunciado
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            // Sombra principal del botón
+                            BoxShadow(
+                              color: const Color(0xFFE53935).withOpacity(0.4),
+                              blurRadius: 16,
+                              offset: const Offset(0, 8),
+                              spreadRadius: -4,
+                            ),
+                            // Sombra de profundidad
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 24,
+                              offset: const Offset(0, 12),
+                              spreadRadius: -6,
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                          child: InkWell(
+                            onTap: () {
+                              if (mounted) {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LocalesVotacionScreen(),
+                                  ),
+                                );
+                              }
+                            },
+                            borderRadius: BorderRadius.circular(16),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFFE53935),
+                                    Color(0xFFD32F2F),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                child: const Text(
+                                  'Ver Detalles',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black26,
+                                        offset: Offset(0, 1),
+                                        blurRadius: 2,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 28),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -116,7 +586,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         ),
                         _buildDiscoveryCard(
                           icon: Icons.people_outline,
-                          title: 'Candidatos',
+                          title: 'Precandidatos',
                           subtitle: 'Conoce sus propuestas',
                           color: Colors.white, // Blanco
                           iconColor: const Color(0xFFD32F2F), // Rojo
@@ -143,13 +613,13 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           destination: const LocalesVotacionScreen(),
                         ),
                         _buildDiscoveryCard(
-                          icon: Icons.calendar_month_outlined,
-                          title: 'Calendario\nElectoral',
-                          subtitle: 'Fechas importantes',
+                          icon: Icons.school_outlined,
+                          title: 'Tutoriales',
+                          subtitle: 'Aprende a usar la app',
                           color: Colors.white, // Blanco
                           iconColor: const Color(0xFFD32F2F), // Rojo
                           textColor: Colors.black87,
-                          destination: const CalendarioElectoralScreen(),
+                          destination: const TutorialesScreen(),
                         ),
                         _buildDiscoveryCard(
                           icon: Icons.newspaper_outlined,

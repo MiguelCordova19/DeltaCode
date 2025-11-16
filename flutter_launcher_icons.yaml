@@ -1,0 +1,9 @@
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/logo.png"
+  adaptive_icon_background: "#D91023"
+  adaptive_icon_foreground: "assets/images/logo.png"
+  
+  # Opcional: Si quieres un ícono redondo para Android
+  # min_sdk_android: 21

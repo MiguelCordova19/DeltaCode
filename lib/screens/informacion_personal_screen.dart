@@ -77,14 +77,9 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
 
     setState(() => _isSaving = true);
 
-    _usuario!.nombres = _nombresController.text.trim();
-    _usuario!.apellidos = _apellidosController.text.trim();
+    // Solo actualizar email y teléfono
     _usuario!.email = _emailController.text.trim();
     _usuario!.telefono = _telefonoController.text.trim();
-    _usuario!.direccion = _direccionController.text.trim();
-    _usuario!.distrito = _distritoController.text.trim();
-    _usuario!.provincia = _provinciaController.text.trim();
-    _usuario!.departamento = _departamentoController.text.trim();
 
     final success = await _usuarioService.guardarUsuario(_usuario!);
 
@@ -98,7 +93,7 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
                 ? 'Información actualizada correctamente'
                 : 'Error al guardar los cambios',
           ),
-          backgroundColor: success ? Colors.green : Colors.red,
+          backgroundColor: success ? const Color(0xFF4CAF50) : const Color(0xFFE53935),
         ),
       );
 
@@ -111,9 +106,9 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: const Text('Información Personal'),
         elevation: 0,
@@ -136,32 +131,26 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Datos Personales
+                    // Datos Personales (no editables)
                     _buildSectionTitle('Datos Personales'),
                     const SizedBox(height: 12),
-                    _buildTextField(
-                      controller: _nombresController,
-                      label: 'Nombres',
-                      icon: Icons.person_outline,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tus nombres';
-                        }
-                        return null;
-                      },
+                    _buildInfoCard(
+                      icon: Icons.person,
+                      title: 'Nombres',
+                      value: _usuario!.nombres,
+                      isEditable: false,
                     ),
                     const SizedBox(height: 12),
-                    _buildTextField(
-                      controller: _apellidosController,
-                      label: 'Apellidos',
-                      icon: Icons.person_outline,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tus apellidos';
-                        }
-                        return null;
-                      },
+                    _buildInfoCard(
+                      icon: Icons.person,
+                      title: 'Apellidos',
+                      value: _usuario!.apellidos,
+                      isEditable: false,
                     ),
+                    const SizedBox(height: 24),
+
+                    // Datos de Contacto (editables)
+                    _buildSectionTitle('Datos de Contacto'),
                     const SizedBox(height: 12),
                     _buildTextField(
                       controller: _emailController,
@@ -186,34 +175,63 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Dirección
+                    // Dirección (no editable)
                     _buildSectionTitle('Dirección'),
                     const SizedBox(height: 12),
-                    _buildTextField(
-                      controller: _direccionController,
-                      label: 'Dirección',
-                      icon: Icons.home_outlined,
-                      maxLines: 2,
+                    _buildInfoCard(
+                      icon: Icons.home,
+                      title: 'Dirección',
+                      value: _usuario!.direccion ?? 'No registrada',
+                      isEditable: false,
                     ),
                     const SizedBox(height: 12),
-                    _buildTextField(
-                      controller: _distritoController,
-                      label: 'Distrito',
-                      icon: Icons.location_city_outlined,
+                    _buildInfoCard(
+                      icon: Icons.location_city,
+                      title: 'Distrito',
+                      value: _usuario!.distrito ?? 'No registrado',
+                      isEditable: false,
                     ),
                     const SizedBox(height: 12),
-                    _buildTextField(
-                      controller: _provinciaController,
-                      label: 'Provincia',
-                      icon: Icons.location_on_outlined,
+                    _buildInfoCard(
+                      icon: Icons.location_on,
+                      title: 'Provincia',
+                      value: _usuario!.provincia ?? 'No registrada',
+                      isEditable: false,
                     ),
                     const SizedBox(height: 12),
-                    _buildTextField(
-                      controller: _departamentoController,
-                      label: 'Departamento',
-                      icon: Icons.map_outlined,
+                    _buildInfoCard(
+                      icon: Icons.map,
+                      title: 'Departamento',
+                      value: _usuario!.departamento ?? 'No registrado',
+                      isEditable: false,
                     ),
                     const SizedBox(height: 32),
+
+                    // Nota informativa
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.blue[200]!),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Solo puedes editar tu correo y teléfono. Los demás datos están protegidos.',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.blue[900],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
 
                     // Botón guardar
                     SizedBox(
@@ -222,11 +240,13 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
                       child: ElevatedButton(
                         onPressed: _isSaving ? null : _guardarCambios,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF7C4DFF),
+                          backgroundColor: const Color(0xFFE53935),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
                         ),
                         child: _isSaving
                             ? const SizedBox(
@@ -260,7 +280,7 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
       style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF7C4DFF),
+        color: Color(0xFFE53935),
       ),
     );
   }
@@ -274,13 +294,27 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(icon, color: const Color(0xFF7C4DFF)),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE53935).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: const Color(0xFFE53935), size: 24),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -291,6 +325,7 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -299,26 +334,17 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
+                    color: Color(0xFF2D2D2D),
                   ),
                 ),
               ],
             ),
           ),
           if (!isEditable)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.orange[100],
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                'No editable',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.orange[900],
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            Icon(
+              Icons.lock_outline,
+              size: 20,
+              color: Colors.grey[400],
             ),
         ],
       ),
@@ -340,7 +366,7 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
       validator: validator,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: const Color(0xFF7C4DFF)),
+        prefixIcon: Icon(icon, color: const Color(0xFFE53935)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey[300]!),
@@ -351,10 +377,10 @@ class _InformacionPersonalScreenState extends State<InformacionPersonalScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF7C4DFF), width: 2),
+          borderSide: const BorderSide(color: Color(0xFFE53935), width: 2),
         ),
         filled: true,
-        fillColor: Colors.grey[50],
+        fillColor: Colors.white,
       ),
     );
   }

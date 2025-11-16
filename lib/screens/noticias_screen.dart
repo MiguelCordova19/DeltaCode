@@ -115,7 +115,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: const Text('Noticias Electorales'),
         elevation: 0,
@@ -124,7 +124,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
         children: [
           // Header con búsqueda
           Container(
-            color: const Color(0xFF7C4DFF),
+            color: const Color(0xFFE53935),
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Column(
               children: [
@@ -139,7 +139,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
                     onChanged: _filtrarNoticias,
                     decoration: InputDecoration(
                       hintText: 'Buscar noticias...',
-                      prefixIcon: const Icon(Icons.search, color: Color(0xFF7C4DFF)),
+                      prefixIcon: const Icon(Icons.search, color: Color(0xFFE53935)),
                       suffixIcon: _searchQuery.isNotEmpty
                           ? IconButton(
                               icon: const Icon(Icons.clear),
@@ -188,7 +188,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
             child: _isLoading
                 ? const Center(
                     child: CircularProgressIndicator(
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFFE53935),
                     ),
                   )
                 : _noticiasFiltradas.isEmpty
@@ -222,7 +222,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
                       )
                     : RefreshIndicator(
                         onRefresh: _cargarNoticias,
-                        color: const Color(0xFF7C4DFF),
+                        color: const Color(0xFFE53935),
                         child: ListView.builder(
                           padding: const EdgeInsets.all(16),
                           itemCount: _noticiasFiltradas.length,
@@ -324,14 +324,14 @@ class _NoticiaCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                      color: const Color(0xFFE53935).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       noticia.fuente,
                       style: const TextStyle(
                         fontSize: 11,
-                        color: Color(0xFF7C4DFF),
+                        color: Color(0xFFE53935),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -340,7 +340,7 @@ class _NoticiaCard extends StatelessWidget {
                   const Icon(
                     Icons.arrow_forward_ios,
                     size: 14,
-                    color: Color(0xFF7C4DFF),
+                    color: Color(0xFFE53935),
                   ),
                 ],
               ),

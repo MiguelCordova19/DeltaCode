@@ -24,7 +24,7 @@ class _PrivacidadSeguridadScreenState extends State<PrivacidadSeguridadScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: const Text('Privacidad y Seguridad'),
         elevation: 0,

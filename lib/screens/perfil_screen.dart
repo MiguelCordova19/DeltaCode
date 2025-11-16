@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import '../services/usuario_service.dart';
 import '../models/usuario.dart';
+import '../providers/idioma_provider.dart';
+import '../utils/translations.dart';
+import '../widgets/monedas_widget.dart';
 import 'login_screen.dart';
 import 'informacion_personal_screen.dart';
 import 'notificaciones_config_screen.dart';
+import 'configuracion_idioma_screen.dart';
+import 'configuracion_audio_screen.dart';
+import 'curiosidades_screen.dart';
 import 'acerca_de_screen.dart';
 import 'locales_votacion_screen.dart';
 import 'privacidad_seguridad_screen.dart';
@@ -40,15 +47,21 @@ class _PerfilScreenState extends State<PerfilScreen> {
   }
 
   Future<void> _handleLogout() async {
+    final idioma = Provider.of<IdiomaProvider>(context, listen: false).locale.languageCode;
+    
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cerrar Sesión'),
-        content: const Text('¿Estás seguro que deseas cerrar sesión?'),
+        title: Text(Translations.get('logout', idioma)),
+        content: Text(
+          idioma == 'qu' 
+            ? '¿Chiqachu lluqsiyta munankichik?'
+            : '¿Estás seguro que deseas cerrar sesión?'
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(idioma == 'qu' ? 'Mana' : 'Cancelar'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
@@ -56,7 +69,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Cerrar Sesión'),
+            child: Text(Translations.get('logout', idioma)),
           ),
         ],
       ),
@@ -73,15 +86,17 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final idioma = Provider.of<IdiomaProvider>(context).locale.languageCode;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Mi Perfil',
-          style: TextStyle(
+        title: Text(
+          Translations.get('myProfile', idioma),
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -101,13 +116,13 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                          color: const Color(0xFFE53935).withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
                           Icons.person,
                           size: 60,
-                          color: Color(0xFF7C4DFF),
+                          color: Color(0xFFE53935),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -135,26 +150,31 @@ class _PerfilScreenState extends State<PerfilScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                            color: const Color(0xFFE53935).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             'DNI: ${_usuario!.dni}',
                             style: const TextStyle(
                               fontSize: 14,
-                              color: Color(0xFF7C4DFF),
+                              color: Color(0xFFE53935),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
                       ],
+                      const SizedBox(height: 16),
+                      
+                      // Widget de monedas
+                      const MonedasWidget(),
+                      
                       const SizedBox(height: 32),
 
                       // Opciones de perfil
                       _buildProfileOption(
                         icon: Icons.person_outline,
-                        title: 'Información Personal',
-                        subtitle: 'Edita tus datos personales',
+                        title: Translations.get('personalInfo', idioma),
+                        subtitle: Translations.get('personalInfoSubtitle', idioma),
                         onTap: () async {
                           await Navigator.push(
                             context,
@@ -167,23 +187,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         },
                       ),
                       _buildProfileOption(
-                        icon: Icons.location_on_outlined,
-                        title: 'Mi Local de Votación',
-                        subtitle: 'Consulta tu local asignado',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const LocalesVotacionScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildProfileOption(
                         icon: Icons.notifications_outlined,
-                        title: 'Notificaciones',
-                        subtitle: 'Configura tus alertas',
+                        title: Translations.get('notifications', idioma),
+                        subtitle: Translations.get('notificationsSubtitle', idioma),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -195,9 +201,37 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         },
                       ),
                       _buildProfileOption(
+                        icon: Icons.language_outlined,
+                        title: Translations.get('appLanguage', idioma),
+                        subtitle: Translations.get('appLanguageSubtitle', idioma),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ConfiguracionIdiomaScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildProfileOption(
+                        icon: Icons.volume_up_outlined,
+                        title: Translations.get('audioConfig', idioma),
+                        subtitle: Translations.get('audioConfigSubtitle', idioma),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ConfiguracionAudioScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildProfileOption(
                         icon: Icons.security_outlined,
-                        title: 'Privacidad y Seguridad',
-                        subtitle: 'Gestiona tu privacidad',
+                        title: Translations.get('privacySecurity', idioma),
+                        subtitle: Translations.get('privacySecuritySubtitle', idioma),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -210,8 +244,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
                       ),
                       _buildProfileOption(
                         icon: Icons.help_outline,
-                        title: 'Ayuda y Soporte',
-                        subtitle: 'Obtén ayuda',
+                        title: Translations.get('helpSupport', idioma),
+                        subtitle: Translations.get('helpSupportSubtitle', idioma),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -223,8 +257,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
                       ),
                       _buildProfileOption(
                         icon: Icons.info_outline,
-                        title: 'Acerca de',
-                        subtitle: 'Información de la app',
+                        title: Translations.get('about', idioma),
+                        subtitle: Translations.get('aboutSubtitle', idioma),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -237,8 +271,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
                       const SizedBox(height: 16),
                       _buildProfileOption(
                         icon: Icons.logout,
-                        title: 'Cerrar Sesión',
-                        subtitle: 'Salir de tu cuenta',
+                        title: Translations.get('logout', idioma),
+                        subtitle: Translations.get('logoutSubtitle', idioma),
                         onTap: _handleLogout,
                         isDestructive: true,
                       ),
@@ -287,7 +321,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
       child: ListTile(
         leading: Icon(
           icon,
-          color: isDestructive ? Colors.red : const Color(0xFF7C4DFF),
+          color: isDestructive ? const Color(0xFFE53935) : const Color(0xFFE53935),
         ),
         title: Text(
           title,

@@ -1,0 +1,88 @@
+{
+  "@@locale": "qu",
+  
+  "appTitle": "Akllasqa 2026",
+  "home": "Qallariy",
+  "chat": "Rimanakuy",
+  "calendar": "Punchaw Qillqa",
+  "profile": "Ñuqa",
+  
+  "discover": "Tariy",
+  "governmentPlans": "Kamachiy\nYuyaykuna",
+  "governmentPlansSubtitle": "43 Partidos",
+  "candidates": "Akllasqakuna",
+  "candidatesSubtitle": "Yachay yuyaykunata",
+  "tableMembers": "Mesa\nRuqkuna",
+  "tableMembersSubtitle": "Allin yachay",
+  "myVotingPlace": "Ñuqap Wasin",
+  "myVotingPlaceSubtitle": "Tariykuy wasikiyta",
+  "electoralCalendar": "Punchaw\nQillqa",
+  "electoralCalendarSubtitle": "Allin punchawkuna",
+  "news": "Willakuykuna",
+  "newsSubtitle": "Musuq willakuykuna",
+  "tutorials": "Yachaykuna",
+  "tutorialsSubtitle": "Yachay app nisqata",
+  
+  "welcome": "¡Allin hamusqayki, {name}!",
+  "@welcome": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "yourVotingPlace": "Qampa Akllana Wasin",
+  "table": "Mesa",
+  "viewDetails": "Qhaway Astawan",
+  "close": "Wichqay",
+  "consultDetailsIn": "Qhaway astawan \"Ñuqap Wasin\" nisqapi",
+  
+  "login": "Yaykuy",
+  "dni": "DNI",
+  "enterDni": "Qillqay DNI yupaykita",
+  "issueDate": "DNI Lluqsisqan Punchaw",
+  "selectDate": "Akllay punchayta",
+  "enter": "Yaykuy",
+  "loginInfo": "DNI chaymanta lluqsisqan punchaw necesitanki yaykuypaq.",
+  
+  "myProfile": "Ñuqap Perfil",
+  "personalInfo": "Sapan Willakuy",
+  "personalInfoSubtitle": "Allichay willakuyniykita",
+  "myVotingPlaceMenu": "Ñuqap Akllana Wasin",
+  "myVotingPlaceMenuSubtitle": "Qhaway wasikiyta",
+  "notifications": "Willaykuna",
+  "notificationsSubtitle": "Wakichiy willaykunata",
+  "appLanguage": "App Simi",
+  "appLanguageSubtitle": "Español / Quechua",
+  "audioConfig": "Uyariy Wakichiy",
+  "audioConfigSubtitle": "Allichay kunka chaymanta utqaylla",
+  "privacySecurity": "Pakay Allin Kay",
+  "privacySecuritySubtitle": "Kamachiy pakayniykita",
+  "helpSupport": "Yanapay",
+  "helpSupportSubtitle": "Taripay yanapakuyta",
+  "about": "Kay Apppa",
+  "aboutSubtitle": "App willakuy",
+  "logout": "Lluqsiy",
+  "logoutSubtitle": "Lluqsiy cuentaykimanta",
+  
+  "searchParty": "Maskay partidota...",
+  "searchNews": "Maskay willakuykunata...",
+  "searchLocal": "Maskay wasita...",
+  
+  "noCandidatesRegistered": "Mana akllasqakuna kanchu",
+  "partyHasNotRegistered": "Kay partido manaraq qillqakunchu akllasqakunata",
+  
+  "audioLanguage": "Simi",
+  "voiceGender": "Kunka Laya",
+  "femaleVoice": "Warmi Kunka",
+  "femaleVoiceSubtitle": "Warmi",
+  "maleVoice": "Qhari Kunka",
+  "maleVoiceSubtitle": "Qhari",
+  "readingSpeed": "Ñawiriy Utqaylla",
+  "slow": "Pisilla",
+  "fast": "Utqaylla",
+  "volume": "Kallpachay",
+  "testVoice": "Pruebay Kunkata",
+  "saveConfiguration": "Waqaychay Wakichiyta"
+}

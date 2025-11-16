@@ -94,7 +94,7 @@ class _AyudaSoporteScreenState extends State<AyudaSoporteScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: const Text('Ayuda y Soporte'),
         elevation: 0,

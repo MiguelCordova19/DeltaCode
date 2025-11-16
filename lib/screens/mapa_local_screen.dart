@@ -135,7 +135,7 @@ class _MapaLocalScreenState extends State<MapaLocalScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: Text(widget.local.nombre),
         elevation: 0,
@@ -164,7 +164,7 @@ class _MapaLocalScreenState extends State<MapaLocalScreen> {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.location_on, color: Color(0xFF7C4DFF), size: 20),
+                    const Icon(Icons.location_on, color: Color(0xFFE53935), size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -234,7 +234,7 @@ class _MapaLocalScreenState extends State<MapaLocalScreen> {
                       if (_isLoading)
                         const Center(
                           child: CircularProgressIndicator(
-                            color: Color(0xFF7C4DFF),
+                            color: Color(0xFFE53935),
                           ),
                         ),
                     ],
@@ -258,7 +258,7 @@ class _MapaLocalScreenState extends State<MapaLocalScreen> {
                           icon: const Icon(Icons.map),
                           label: const Text('Abrir en Google Maps'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF7C4DFF),
+                            backgroundColor: const Color(0xFFE53935),
                             foregroundColor: Colors.white,
                           ),
                         ),
@@ -286,7 +286,7 @@ class _MapaLocalScreenState extends State<MapaLocalScreen> {
               icon: const Icon(Icons.directions),
               label: const Text('Cómo llegar'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7C4DFF),
+                backgroundColor: const Color(0xFFE53935),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(

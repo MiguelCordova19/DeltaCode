@@ -357,6 +357,30 @@ class _MiembroCard extends StatelessWidget {
     required this.onTap,
   });
 
+  String _acortarNombre(String nombreCompleto) {
+    // Dividir el nombre completo en partes
+    final partes = nombreCompleto.trim().split(' ');
+    
+    if (partes.length <= 2) {
+      // Si solo tiene 2 palabras o menos, devolver tal cual
+      return nombreCompleto;
+    }
+    
+    // Asumir formato: Nombre1 Nombre2 Apellido1 Apellido2
+    if (partes.length == 4) {
+      // Juan Carlos Rodriguez Perez -> Juan C. Rodriguez P.
+      return '${partes[0]} ${partes[1][0]}. ${partes[2]} ${partes[3][0]}.';
+    } else if (partes.length == 3) {
+      // Juan Rodriguez Perez -> Juan Rodriguez P.
+      return '${partes[0]} ${partes[1]} ${partes[2][0]}.';
+    } else if (partes.length > 4) {
+      // Más de 4 partes, tomar primeras 2 y últimas 2
+      return '${partes[0]} ${partes[1][0]}. ${partes[partes.length - 2]} ${partes[partes.length - 1][0]}.';
+    }
+    
+    return nombreCompleto;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -390,18 +414,10 @@ class _MiembroCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      miembro.nombreCompleto,
+                      _acortarNombre(miembro.nombreCompleto),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'DNI: ${miembro.dni}',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
                       ),
                     ),
                     const SizedBox(height: 6),

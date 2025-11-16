@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../services/gamificacion_service.dart';
 
 class AcercaDeScreen extends StatelessWidget {
   const AcercaDeScreen({super.key});
@@ -16,7 +17,7 @@ class AcercaDeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: const Text('Acerca de'),
         elevation: 0,
@@ -29,28 +30,44 @@ class AcercaDeScreen extends StatelessWidget {
             Container(
               width: 120,
               height: 120,
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C4DFF),
-                borderRadius: BorderRadius.circular(24),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFE53935), Color(0xFFD32F2F)],
+                ),
+                shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF7C4DFF).withOpacity(0.3),
+                    color: const Color(0xFFE53935).withOpacity(0.4),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.how_to_vote,
-                size: 60,
-                color: Colors.white,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                padding: const EdgeInsets.all(15),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(
+                      Icons.how_to_vote,
+                      size: 40,
+                      color: Color(0xFFE53935),
+                    );
+                  },
+                ),
               ),
             ),
             const SizedBox(height: 24),
 
             // Nombre de la app
             const Text(
-              'Elecciones 2026',
+              'DecideYA',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -94,16 +111,16 @@ class AcercaDeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '¿Qué es Elecciones 2026?',
+                    '¿Qué es DecideYA?',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFFE53935),
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Una aplicación móvil diseñada para informar y educar a los ciudadanos peruanos sobre el proceso electoral 2026. Accede a información sobre candidatos, planes de gobierno, calendario electoral y más.',
+                    'Una aplicación móvil diseñada para informar y educar a los ciudadanos peruanos sobre el proceso electoral 2026. Accede a información sobre precandidatos, planes de gobierno, calendario electoral y más.',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[700],
@@ -118,8 +135,8 @@ class AcercaDeScreen extends StatelessWidget {
             // Características
             _buildFeatureCard(
               icon: Icons.people,
-              title: 'Candidatos',
-              description: 'Conoce a los candidatos y sus propuestas',
+              title: 'Precandidatos',
+              description: 'Conoce a los precandidatos y sus propuestas',
             ),
             const SizedBox(height: 12),
             _buildFeatureCard(
@@ -166,6 +183,83 @@ class AcercaDeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
+            // Botón de reseteo (solo para pruebas)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.orange[50],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.orange[200]!),
+              ),
+              child: Column(
+                children: [
+                  const Row(
+                    children: [
+                      Icon(Icons.warning_amber, color: Colors.orange),
+                      SizedBox(width: 8),
+                      Text(
+                        'Herramientas de Desarrollo',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('⚠️ Resetear Datos'),
+                            content: const Text(
+                              '¿Estás seguro de que quieres resetear todos los datos de gamificación? Esto eliminará:\n\n• Todas las monedas\n• Todos los logros\n• Todo el historial\n• Historias visitadas',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text('Cancelar'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                ),
+                                child: const Text('Resetear'),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirm == true && context.mounted) {
+                          await GamificacionService().resetearDatos();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('✅ Datos reseteados correctamente'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Resetear Datos de Gamificación'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+
             // Créditos
             Container(
               padding: const EdgeInsets.all(20),
@@ -193,7 +287,7 @@ class AcercaDeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    '© 2025 Elecciones 2026. Todos los derechos reservados.',
+                    '© 2025 DecideYA. Todos los derechos reservados.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,

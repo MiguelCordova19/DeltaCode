@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
     
     <application
-        android:label="deltacode_elecciones_presidenciales_2026"
+        android:label="DecideYA"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

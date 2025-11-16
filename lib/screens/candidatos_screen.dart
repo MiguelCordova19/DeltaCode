@@ -93,7 +93,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
                       ),
                       const Expanded(
                         child: Text(
-                          'Candidatos',
+                          'Precandidatos',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -303,7 +303,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
                 ),
               ),
               
-              // Botón "Ver Candidatos"
+              // Botón "Ver Precandidatos"
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: const BoxDecoration(
@@ -314,7 +314,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
                   ),
                 ),
                 child: const Text(
-                  'Ver Candidatos',
+                  'Ver Precandidatos',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
@@ -416,7 +416,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
               ],
             ),
           ),
-          // Botón "Ver Candidatos" con animación
+          // Botón "Ver Precandidatos" con animación
           Material(
             color: Colors.transparent,
             child: InkWell(
@@ -442,7 +442,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
                   ),
                 ),
                 child: const Text(
-                  'Ver Candidatos',
+                  'Ver Precandidatos',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
@@ -521,7 +521,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
                     ),
                     const SizedBox(height: 4),
                     const Text(
-                      'Candidatos 2026',
+                      'Precandidatos 2026',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.black54,

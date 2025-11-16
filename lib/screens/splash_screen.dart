@@ -78,11 +78,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Logo circular
                   Container(
-                    padding: const EdgeInsets.all(32),
+                    width: 120,
+                    height: 120,
                     decoration: BoxDecoration(
-                      color: Colors.white,
                       shape: BoxShape.circle,
+                      color: Colors.white,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.3),
@@ -91,20 +93,39 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         ),
                       ],
                     ),
-                    child: const Icon(
-                      Icons.how_to_vote,
-                      size: 80,
-                      color: Color(0xFFD91023),
+                    child: ClipOval(
+                      child: Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Si no encuentra el logo, muestra el ícono por defecto
+                            return const Icon(
+                              Icons.how_to_vote,
+                              size: 60,
+                              color: Color(0xFFD91023),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 32),
                   const Text(
-                    'Elecciones 2026',
+                    'DecideYA',
                     style: TextStyle(
-                      fontSize: 36,
+                      fontSize: 48,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                      letterSpacing: 1.2,
+                      letterSpacing: 2,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black26,
+                          offset: Offset(0, 4),
+                          blurRadius: 8,
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 8),

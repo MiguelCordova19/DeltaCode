@@ -45,6 +45,9 @@ dependencies:
   google_generative_ai: ^0.2.2
   youtube_player_flutter: ^9.0.3
   table_calendar: ^3.0.9
+  intl: ^0.20.2
+  provider: ^6.1.1
+  barcode_widget: ^2.0.4
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +59,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.13.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -70,6 +74,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/images/logo.png
     - assets/images/partidos/
     - assets/images/candidatos/
     - assets/images/default/

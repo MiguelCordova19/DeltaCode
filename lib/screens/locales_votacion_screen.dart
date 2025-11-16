@@ -230,7 +230,7 @@ class _LocalesVotacionScreenState extends State<LocalesVotacionScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: const Text('Locales de Votación'),
         elevation: 0,
@@ -239,7 +239,7 @@ class _LocalesVotacionScreenState extends State<LocalesVotacionScreen> {
         children: [
           // Header con búsqueda y filtros
           Container(
-            color: const Color(0xFF7C4DFF),
+            color: const Color(0xFFE53935),
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Column(
               children: [
@@ -254,7 +254,7 @@ class _LocalesVotacionScreenState extends State<LocalesVotacionScreen> {
                     onChanged: (_) => _filtrarLocales(),
                     decoration: InputDecoration(
                       hintText: 'Buscar local...',
-                      prefixIcon: const Icon(Icons.search, color: Color(0xFF7C4DFF)),
+                      prefixIcon: const Icon(Icons.search, color: Color(0xFFE53935)),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
                               icon: const Icon(Icons.clear),
@@ -276,7 +276,16 @@ class _LocalesVotacionScreenState extends State<LocalesVotacionScreen> {
                 // Filtro de distrito
                 Row(
                   children: [
-                    const Icon(Icons.filter_list, color: Colors.white70, size: 20),
+                    const Icon(Icons.filter_list, color: Colors.white, size: 20),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Distrito:',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: SingleChildScrollView(
@@ -286,7 +295,7 @@ class _LocalesVotacionScreenState extends State<LocalesVotacionScreen> {
                             final isSelected = _filtroDistrito == distrito;
                             return Padding(
                               padding: const EdgeInsets.only(right: 8),
-                              child: FilterChip(
+                              child: ChoiceChip(
                                 label: Text(distrito),
                                 selected: isSelected,
                                 onSelected: (selected) {
@@ -298,9 +307,14 @@ class _LocalesVotacionScreenState extends State<LocalesVotacionScreen> {
                                 backgroundColor: Colors.white.withOpacity(0.2),
                                 selectedColor: Colors.white,
                                 labelStyle: TextStyle(
-                                  color: isSelected ? const Color(0xFF7C4DFF) : Colors.white,
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  color: isSelected ? const Color(0xFFE53935) : Colors.white,
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                                 ),
+                                side: BorderSide(
+                                  color: isSelected ? Colors.white : Colors.white.withOpacity(0.5),
+                                  width: isSelected ? 2 : 1,
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               ),
                             );
                           }).toList(),
@@ -318,7 +332,7 @@ class _LocalesVotacionScreenState extends State<LocalesVotacionScreen> {
             child: _isLoading
                 ? const Center(
                     child: CircularProgressIndicator(
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFFE53935),
                     ),
                   )
                 : _localesFiltrados.isEmpty
@@ -380,12 +394,12 @@ class _LocalCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                  color: const Color(0xFFE53935).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.school,
-                  color: Color(0xFF7C4DFF),
+                  color: Color(0xFFE53935),
                   size: 28,
                 ),
               ),
@@ -467,7 +481,7 @@ class _LocalCard extends StatelessWidget {
               const Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
-                color: Color(0xFF7C4DFF),
+                color: Color(0xFFE53935),
               ),
             ],
           ),

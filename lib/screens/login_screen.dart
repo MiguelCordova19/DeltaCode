@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFF7C4DFF),
+              primary: Color(0xFFE53935),
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
@@ -115,41 +115,72 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Logo y título
+                  // Logo circular compacto
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    width: 100,
+                    height: 100,
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFFE53935),
+                          Color(0xFFD32F2F),
+                        ],
+                      ),
                       shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFE53935).withOpacity(0.4),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                          spreadRadius: -5,
+                        ),
+                      ],
                     ),
-                    child: const Icon(
-                      Icons.how_to_vote,
-                      size: 80,
-                      color: Color(0xFF7C4DFF),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.how_to_vote_rounded,
+                            size: 50,
+                            color: Color(0xFFE53935),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
                   
                   const Text(
-                    'Elecciones 2026',
+                    'DecideYA',
                     style: TextStyle(
-                      fontSize: 32,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      letterSpacing: 1.5,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   
                   const Text(
                     'Tu guía electoral inteligente',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Colors.black54,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 32),
 
                   // Campo DNI
                   TextFormField(
@@ -162,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                       labelText: 'DNI',
                       hintText: 'Ingresa tu número de DNI',
-                      prefixIcon: const Icon(Icons.badge, color: Color(0xFF7C4DFF)),
+                      prefixIcon: const Icon(Icons.badge, color: Color(0xFFE53935)),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -173,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFF7C4DFF),
+                          color: Color(0xFFE53935),
                           width: 2,
                         ),
                       ),
@@ -204,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           const Icon(
                             Icons.calendar_today,
-                            color: Color(0xFF7C4DFF),
+                            color: Color(0xFFE53935),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -273,34 +304,54 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                  // Botón de inicio de sesión
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _handleLogin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7C4DFF),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 2,
+                  // Botón de inicio de sesión con efecto 3D
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: _isLoading ? [] : [
+                        BoxShadow(
+                          color: const Color(0xFFE53935).withOpacity(0.4),
+                          blurRadius: 16,
+                          offset: const Offset(0, 8),
+                          spreadRadius: -4,
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 24,
+                          offset: const Offset(0, 12),
+                          spreadRadius: -6,
+                        ),
+                      ],
                     ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _handleLogin,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE53935),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Text(
+                              'Ingresar',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          )
-                        : const Text(
-                            'Ingresar',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                    ),
                   ),
                   const SizedBox(height: 24),
 

@@ -1,0 +1,88 @@
+{
+  "@@locale": "es",
+  
+  "appTitle": "Elecciones 2026",
+  "home": "Inicio",
+  "chat": "Chat",
+  "calendar": "Calendario",
+  "profile": "Perfil",
+  
+  "discover": "Descubre",
+  "governmentPlans": "Planes de\nGobierno",
+  "governmentPlansSubtitle": "43 Partidos",
+  "candidates": "Precandidatos",
+  "candidatesSubtitle": "Conoce sus propuestas",
+  "tableMembers": "Miembros\nde Mesa",
+  "tableMembersSubtitle": "Información importante",
+  "myVotingPlace": "Mi Local",
+  "myVotingPlaceSubtitle": "Encuentra tu local",
+  "electoralCalendar": "Calendario\nElectoral",
+  "electoralCalendarSubtitle": "Fechas importantes",
+  "news": "Noticias",
+  "newsSubtitle": "Últimas actualizaciones",
+  "tutorials": "Tutoriales",
+  "tutorialsSubtitle": "Aprende a usar la app",
+  
+  "welcome": "¡Bienvenido, {name}!",
+  "@welcome": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "yourVotingPlace": "Tu Local de Votación",
+  "table": "Mesa",
+  "viewDetails": "Ver Detalles",
+  "close": "Cerrar",
+  "consultDetailsIn": "Consulta más detalles en \"Mi Local\"",
+  
+  "login": "Iniciar Sesión",
+  "dni": "DNI",
+  "enterDni": "Ingresa tu número de DNI",
+  "issueDate": "Fecha de Emisión del DNI",
+  "selectDate": "Seleccionar fecha",
+  "enter": "Ingresar",
+  "loginInfo": "Necesitas tu DNI y la fecha de emisión para acceder a la información electoral.",
+  
+  "myProfile": "Mi Perfil",
+  "personalInfo": "Información Personal",
+  "personalInfoSubtitle": "Edita tus datos personales",
+  "myVotingPlaceMenu": "Mi Local de Votación",
+  "myVotingPlaceMenuSubtitle": "Consulta tu local asignado",
+  "notifications": "Notificaciones",
+  "notificationsSubtitle": "Configura tus alertas",
+  "appLanguage": "Idioma de la Aplicación",
+  "appLanguageSubtitle": "Español / Quechua",
+  "audioConfig": "Configuración de Audio",
+  "audioConfigSubtitle": "Ajusta la voz y velocidad",
+  "privacySecurity": "Privacidad y Seguridad",
+  "privacySecuritySubtitle": "Gestiona tu privacidad",
+  "helpSupport": "Ayuda y Soporte",
+  "helpSupportSubtitle": "Obtén ayuda",
+  "about": "Acerca de",
+  "aboutSubtitle": "Información de la app",
+  "logout": "Cerrar Sesión",
+  "logoutSubtitle": "Salir de tu cuenta",
+  
+  "searchParty": "Buscar partido político...",
+  "searchNews": "Buscar noticias...",
+  "searchLocal": "Buscar local...",
+  
+  "noCandidatesRegistered": "No hay candidatos registrados",
+  "partyHasNotRegistered": "Este partido aún no ha registrado sus candidatos",
+  
+  "audioLanguage": "Idioma",
+  "voiceGender": "Género de Voz",
+  "femaleVoice": "Voz Femenina",
+  "femaleVoiceSubtitle": "Mujer",
+  "maleVoice": "Voz Masculina",
+  "maleVoiceSubtitle": "Hombre",
+  "readingSpeed": "Velocidad de Lectura",
+  "slow": "Lenta",
+  "fast": "Rápida",
+  "volume": "Volumen",
+  "testVoice": "Probar Voz",
+  "saveConfiguration": "Guardar Configuración"
+}

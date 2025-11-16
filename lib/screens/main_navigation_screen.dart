@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home_screen_content.dart';
 import 'chat_list_screen.dart';
 import 'calendario_electoral_screen.dart';
+import 'curiosidades_screen.dart';
 import 'perfil_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -22,6 +23,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
     const HomeScreenContent(),
     const ChatListScreen(),
     const CalendarioElectoralScreen(),
+    const CuriosidadesScreen(),
     const PerfilScreen(),
   ];
 
@@ -31,7 +33,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
     
     // Controladores para los iconos del menú
     _controllers = List.generate(
-      4,
+      5,
       (index) => AnimationController(
         duration: const Duration(milliseconds: 300),
         vsync: this,
@@ -130,7 +132,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
                 _buildNavItem(Icons.home_outlined, 0),
                 _buildNavItem(Icons.chat_bubble_outline, 1),
                 _buildNavItem(Icons.calendar_month_outlined, 2),
-                _buildNavItem(Icons.person_outline, 3),
+                _buildNavItem(Icons.auto_stories, 3),
+                _buildNavItem(Icons.person_outline, 4),
               ],
             ),
           ),
@@ -142,14 +145,55 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
   Widget _buildNavItem(IconData icon, int index) {
     final isSelected = _selectedIndex == index;
     
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => _onItemTapped(index),
-        borderRadius: BorderRadius.circular(15),
-        splashColor: const Color(0xFFE53935).withOpacity(0.2), // Efecto splash rojo
-        highlightColor: const Color(0xFFE53935).withOpacity(0.1),
-        child: Container(
+    // Nombres de las secciones (Español / Quechua)
+    final labelsEs = [
+      'Inicio',
+      'Chat',
+      'Calendario',
+      'Curiosidades',
+      'Perfil',
+    ];
+    
+    final labelsQu = [
+      'Qallariy',
+      'Rimanakuy',
+      'Punchaw Qillqa',
+      'Yachaykuna',
+      'Ñuqa',
+    ];
+    
+    // Detectar idioma actual (puedes mejorarlo con Provider si lo necesitas)
+    final labels = labelsEs; // Por ahora en español, puedes agregar lógica para cambiar
+    
+    return Tooltip(
+      message: labels[index],
+      preferBelow: false,
+      verticalOffset: 20,
+      waitDuration: const Duration(milliseconds: 500),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2D2D2D),
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      textStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _onItemTapped(index),
+          borderRadius: BorderRadius.circular(15),
+          splashColor: const Color(0xFFE53935).withOpacity(0.2), // Efecto splash rojo
+          highlightColor: const Color(0xFFE53935).withOpacity(0.1),
+          child: Container(
           width: 60,
           height: 70,
           decoration: BoxDecoration(
@@ -243,6 +287,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
           ),
         ),
       ),
+    ),
     );
   }
 }

@@ -107,7 +107,7 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
       id: 'bienvenida',
       texto: '¡Hola! 👋 Soy tu asistente electoral para las Elecciones 2026.\n\n'
           'Puedo ayudarte con información sobre:\n'
-          '• Partidos políticos y candidatos\n'
+          '• Partidos políticos y precandidatos\n'
           '• Planes de gobierno\n'
           '• Proceso electoral\n'
           '• Locales de votación\n'
@@ -329,7 +329,7 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
               Text('• Conversaciones guardadas localmente'),
               Text('• Historial accesible sin internet'),
               Text('• Respuestas sobre el proceso electoral'),
-              Text('• Información de candidatos y partidos'),
+              Text('• Información de precandidatos y partidos'),
               Text('• Lectura de mensajes con voz'),
               SizedBox(height: 16),
               Text(
