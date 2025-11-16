@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'candidatos_screen.dart';
 import 'diputados_screen.dart';
 import 'senadores_screen.dart';
+import 'parlamento_andino_screen.dart';
 
 class CandidatosMainScreen extends StatefulWidget {
   const CandidatosMainScreen({super.key});
@@ -17,7 +18,7 @@ class _CandidatosMainScreenState extends State<CandidatosMainScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -63,6 +64,10 @@ class _CandidatosMainScreenState extends State<CandidatosMainScreen>
               icon: Icon(Icons.account_balance),
               text: 'Senadores',
             ),
+            Tab(
+              icon: Icon(Icons.public),
+              text: 'Parlamento Andino',
+            ),
           ],
         ),
       ),
@@ -72,6 +77,7 @@ class _CandidatosMainScreenState extends State<CandidatosMainScreen>
           CandidatosScreen(),
           DiputadosScreen(),
           SenadoresScreen(),
+          ParlamentoAndinoScreen(),
         ],
       ),
     );

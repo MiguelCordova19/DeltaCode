@@ -142,14 +142,8 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
                     ],
                   ),
                 )
-              : GridView.builder(
+              : ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 0.75,
-                  ),
                   itemCount: _filteredPartidos.length,
                   itemBuilder: (context, index) {
                     return _buildPartidoCard(_filteredPartidos[index]);
@@ -162,67 +156,66 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
   }
 
   Widget _buildPartidoCard(PartidoPolitico partido) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            _selectedPartido = partido;
-          });
-        },
-        borderRadius: BorderRadius.circular(20),
-        splashColor: const Color(0xFFD32F2F).withOpacity(0.3),
-        highlightColor: const Color(0xFFD32F2F).withOpacity(0.2),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: const Color(0xFFD32F2F).withOpacity(0.3),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFD32F2F).withOpacity(0.15),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            setState(() {
+              _selectedPartido = partido;
+            });
+          },
+          borderRadius: BorderRadius.circular(16),
+          splashColor: const Color(0xFFD32F2F).withOpacity(0.3),
+          highlightColor: const Color(0xFFD32F2F).withOpacity(0.2),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: const Color(0xFFD32F2F).withOpacity(0.3),
+                width: 1,
               ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Logo del partido - Ocupa la mitad superior
-              Expanded(
-                flex: 3,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(20),
-                  child: _buildPartidoImage(partido.logoPath),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFD32F2F).withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
-              ),
-              
-              // Información del partido
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Nombre del partido
-                      Flexible(
-                        child: Text(
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  // Logo del partido
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.grey[200]!,
+                        width: 1,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: _buildPartidoImage(partido.logoPath),
+                  ),
+                  
+                  const SizedBox(width: 16),
+                  
+                  // Información del partido
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
                           partido.nombre,
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF2D2D2D),
                             height: 1.2,
@@ -230,60 +223,44 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      
-                      const SizedBox(height: 4),
-                      
-                      // Siglas
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFD32F2F).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                            color: const Color(0xFFD32F2F).withOpacity(0.3),
-                            width: 1,
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFD32F2F).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFFD32F2F).withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            partido.nombreCorto,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFFD32F2F),
+                            ),
                           ),
                         ),
-                        child: Text(
-                          partido.nombreCorto,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFFD32F2F),
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                  
+                  const SizedBox(width: 12),
+                  
+                  // Flecha
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Color(0xFFD32F2F),
+                    size: 20,
+                  ),
+                ],
               ),
-              
-              // Botón "Ver Precandidatos"
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 9),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFD32F2F), // Rojo
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                ),
-                child: const Text(
-                  'Ver Precandidatos',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -563,6 +540,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
           // Agrupar candidatos válidos por cargo
           final grupos = Candidato.agruparPorCargo(candidatosValidos);
           List<Widget> widgets = [];
+          int contadorGlobal = 1; // Contador único para todos los candidatos
           
           grupos.forEach((cargo, candidatosCargo) {
             // Título del cargo
@@ -610,28 +588,10 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
               ),
             );
             
-            // Candidatos del cargo
-            if (candidatosCargo.length == 1) {
-              // Un solo candidato - tarjeta completa
-              widgets.add(_buildCandidatoCard(candidatosCargo[0]));
-            } else {
-              // Múltiples candidatos - grid
-              widgets.add(
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemCount: candidatosCargo.length,
-                  itemBuilder: (context, index) {
-                    return _buildCandidatoCardCompact(candidatosCargo[index]);
-                  },
-                ),
-              );
+            // Candidatos del cargo en formato lista
+            for (var candidato in candidatosCargo) {
+              widgets.add(_buildCandidatoCardLista(candidato, contadorGlobal));
+              contadorGlobal++;
             }
             
             widgets.add(const SizedBox(height: 24));
@@ -659,8 +619,8 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
     return validos;
   }
 
-  // Tarjeta compacta para múltiples candidatos
-  Widget _buildCandidatoCardCompact(Candidato candidato) {
+  // Tarjeta en formato lista para candidatos
+  Widget _buildCandidatoCardLista(Candidato candidato, int numero) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -674,6 +634,7 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
         );
       },
       child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -689,59 +650,109 @@ class _CandidatosScreenState extends State<CandidatosScreen> {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Foto
-            Expanded(
-              child: Container(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              // Contador
+              Container(
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
+                  color: const Color(0xFFE53935),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text(
+                    '$numero',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
+              ),
+              const SizedBox(width: 12),
+              
+              // Foto del candidato
+              Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
+                  borderRadius: BorderRadius.circular(12),
                   child: _buildCandidatoImage(candidato.fotoPath),
                 ),
               ),
-            ),
-            
-            // Info
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    candidato.nombre,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2D2D2D),
-                      height: 1.2,
+              const SizedBox(width: 12),
+              
+              // Información del candidato
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      candidato.nombre,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2D2D2D),
+                        height: 1.2,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Ver perfil',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Color(0xFFE53935),
-                      fontWeight: FontWeight.w600,
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        // Logo del partido
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: Colors.grey[300]!,
+                              width: 1,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: _buildPartidoImage(_selectedPartido!.logoPath),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            _selectedPartido!.nombreCorto,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+              
+              // Flecha
+              const Icon(
+                Icons.arrow_forward_ios,
+                color: Color(0xFFE53935),
+                size: 18,
+              ),
+            ],
+          ),
         ),
       ),
     );

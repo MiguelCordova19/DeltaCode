@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/presidente.dart';
 import '../services/gamificacion_service.dart';
 
@@ -11,7 +12,8 @@ class CuriosidadesScreen extends StatefulWidget {
 }
 
 class _CuriosidadesScreenState extends State<CuriosidadesScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
+  bool _hasShownTutorial = false;
   late AnimationController _controller;
   late AnimationController _handController;
   late ScrollController _scrollController;
@@ -153,14 +155,9 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
     
     // Cargar historias vistas
     _cargarHistoriasVistas();
-    
-    // Mostrar tutorial inmediatamente al entrar
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && _showTutorial && _visitedYears.isEmpty) {
-        _showTutorialDialog();
-      }
-    });
   }
+
+
 
   Future<void> _cargarHistoriasVistas() async {
     final historias = await _gamificacionService.obtenerHistoriasVistas();
@@ -170,6 +167,8 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
       });
     }
   }
+
+  // Método eliminado - el tutorial ahora se muestra desde MainNavigationScreen
 
   @override
   void dispose() {
@@ -298,34 +297,6 @@ class _CuriosidadesScreenState extends State<CuriosidadesScreen>
             floating: false,
             pinned: true,
             backgroundColor: const Color(0xFFE53935),
-            actions: [
-              // Contador de monedas
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    const Text(
-                      '🪙',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '$_totalCoins',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(

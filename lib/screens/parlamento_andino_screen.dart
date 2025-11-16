@@ -1,71 +1,25 @@
 import 'package:flutter/material.dart';
-import '../models/senador.dart';
-import '../data/senadores_data.dart';
+import '../models/parlamento_andino.dart';
+import '../data/parlamento_andino_data.dart';
 
-class SenadoresScreen extends StatefulWidget {
-  const SenadoresScreen({super.key});
+class ParlamentoAndinoScreen extends StatefulWidget {
+  const ParlamentoAndinoScreen({super.key});
 
   @override
-  State<SenadoresScreen> createState() => _SenadoresScreenState();
+  State<ParlamentoAndinoScreen> createState() => _ParlamentoAndinoScreenState();
 }
 
-class _SenadoresScreenState extends State<SenadoresScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _ParlamentoAndinoScreenState extends State<ParlamentoAndinoScreen> {
   String? _partidoFiltro;
 
   @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          color: const Color(0xFFE53935),
-          child: TabBar(
-            controller: _tabController,
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            tabs: const [
-              Tab(text: 'Precandidatos'),
-              Tab(text: 'Lista Oficial JNE'),
-            ],
-          ),
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildPrecandidatosTab(),
-              _buildOficialesTab(),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPrecandidatosTab() {
-    final precandidatos = [
-      ...SenadoresData.getPrecandidatosNacionales(),
-      ...SenadoresData.getPrecandidatosRegionales(),
-    ];
-    final partidos = Senador.getPartidosUnicos(precandidatos);
+    final candidatos = ParlamentoAndinoData.getCandidatos();
+    final partidos = ParlamentoAndino.getPartidosUnicos(candidatos);
     
-    final senadoresFiltrados = _partidoFiltro == null
-        ? precandidatos
-        : precandidatos.where((s) => s.partido == _partidoFiltro).toList();
+    final candidatosFiltrados = _partidoFiltro == null
+        ? candidatos
+        : candidatos.where((c) => c.partido == _partidoFiltro).toList();
 
     return Column(
       children: [
@@ -90,7 +44,7 @@ class _SenadoresScreenState extends State<SenadoresScreen>
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
-                  Icons.info_outline,
+                  Icons.public,
                   color: Color(0xFF1976D2),
                   size: 20,
                 ),
@@ -101,7 +55,7 @@ class _SenadoresScreenState extends State<SenadoresScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Circunscripción Nacional',
+                      'Parlamento Andino',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -110,7 +64,7 @@ class _SenadoresScreenState extends State<SenadoresScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Los senadores representan a todo el país. Lista referencial sujeta a confirmación del JNE.',
+                      'Elección nacional de representantes peruanos al Parlamento Andino.',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[700],
@@ -149,9 +103,9 @@ class _SenadoresScreenState extends State<SenadoresScreen>
 
         const SizedBox(height: 16),
 
-        // Lista de senadores
+        // Lista de candidatos
         Expanded(
-          child: senadoresFiltrados.isEmpty
+          child: candidatosFiltrados.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -163,7 +117,7 @@ class _SenadoresScreenState extends State<SenadoresScreen>
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'No hay precandidatos\ncon este filtro',
+                        'No hay candidatos\ncon este filtro',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16,
@@ -175,66 +129,13 @@ class _SenadoresScreenState extends State<SenadoresScreen>
                 )
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: senadoresFiltrados.length,
+                  itemCount: candidatosFiltrados.length,
                   itemBuilder: (context, index) {
-                    return _buildSenadorCard(senadoresFiltrados[index]);
+                    return _buildCandidatoCard(candidatosFiltrados[index], index + 1);
                   },
                 ),
         ),
       ],
-    );
-  }
-
-  Widget _buildOficialesTab() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE53935).withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.pending_actions,
-                size: 80,
-                color: Color(0xFFE53935),
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'Lista Oficial Pendiente',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF2D2D2D),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'El JNE aún no publica la lista oficial de candidatos a Senadores.',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[700],
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Actualizaremos esta sección apenas esté disponible.',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -263,9 +164,9 @@ class _SenadoresScreenState extends State<SenadoresScreen>
     );
   }
 
-  Widget _buildSenadorCard(Senador senador) {
+  Widget _buildCandidatoCard(ParlamentoAndino candidato, int numero) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -286,21 +187,24 @@ class _SenadoresScreenState extends State<SenadoresScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
+            // Header con número y nombre
             Row(
               children: [
                 Container(
-                  width: 60,
-                  height: 60,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1976D2).withOpacity(0.1),
-                    shape: BoxShape.circle,
+                    color: const Color(0xFF1976D2),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.person,
-                      size: 32,
-                      color: Color(0xFF1976D2),
+                  child: Center(
+                    child: Text(
+                      '$numero',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -310,26 +214,22 @@ class _SenadoresScreenState extends State<SenadoresScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        senador.nombre,
+                        candidato.nombre,
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF2D2D2D),
                         ),
                       ),
-                      if (senador.profesion != null || senador.edad != null) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          [
-                            if (senador.profesion != null) senador.profesion!,
-                            if (senador.edad != null) '${senador.edad} años',
-                          ].join(' • '),
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey[600],
-                          ),
+                      const SizedBox(height: 4),
+                      Text(
+                        candidato.partido,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
@@ -338,44 +238,9 @@ class _SenadoresScreenState extends State<SenadoresScreen>
 
             const SizedBox(height: 12),
 
-            // Partido
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE53935).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: const Color(0xFFE53935).withOpacity(0.3),
-                ),
-              ),
-              child: Text(
-                senador.partido,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFFE53935),
-                ),
-              ),
-            ),
-
-            if (senador.biografia != null) ...[
-              const SizedBox(height: 12),
-              // Biografía
-              Text(
-                senador.biografia!,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[700],
-                  height: 1.4,
-                ),
-              ),
-            ],
-
-            const SizedBox(height: 16),
-
-            // Propuestas
+            // Consignas
             const Text(
-              'Propuestas principales:',
+              'Consignas principales:',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -383,7 +248,7 @@ class _SenadoresScreenState extends State<SenadoresScreen>
               ),
             ),
             const SizedBox(height: 8),
-            ...senador.propuestas.map((propuesta) {
+            ...candidato.consignas.map((consigna) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Row(
@@ -401,7 +266,7 @@ class _SenadoresScreenState extends State<SenadoresScreen>
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        propuesta,
+                        consigna,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[700],

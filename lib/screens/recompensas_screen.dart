@@ -497,6 +497,22 @@ class _RecompensasScreenState extends State<RecompensasScreen>
         'puntos': 50,
         'requisito': 'Completa un tutorial en la sección "Tutoriales"',
       },
+      {
+        'id': 'ubicacion_encontrada',
+        'icono': '📍',
+        'titulo': 'Ubicación Encontrada',
+        'descripcion': 'Encuentra tu local de votación',
+        'puntos': 30,
+        'requisito': 'Busca tu local de votación en "Locales de Votación"',
+      },
+      {
+        'id': 'miembro_mesa_preparado',
+        'icono': '🗳️',
+        'titulo': 'Miembro de Mesa Preparado',
+        'descripcion': 'Completa el tutorial de miembro de mesa',
+        'puntos': 75,
+        'requisito': 'Completa el tutorial completo de "Miembro de Mesa"',
+      },
     ];
 
     // Verificar qué logros están desbloqueados

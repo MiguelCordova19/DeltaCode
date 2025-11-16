@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 import '../models/evento_electoral.dart';
 
 class CalendarioElectoralScreen extends StatefulWidget {
@@ -150,6 +151,7 @@ class _CalendarioElectoralScreenState extends State<CalendarioElectoralScreen>
       children: [
         // Calendario
         TableCalendar(
+          locale: 'es_ES',
           firstDay: DateTime(2024, 7, 1),
           lastDay: DateTime(2026, 12, 31),
           focusedDay: _focusedDay,
@@ -189,6 +191,10 @@ class _CalendarioElectoralScreenState extends State<CalendarioElectoralScreen>
           headerStyle: const HeaderStyle(
             formatButtonVisible: false,
             titleCentered: true,
+          ),
+          daysOfWeekStyle: const DaysOfWeekStyle(
+            weekdayStyle: TextStyle(fontWeight: FontWeight.bold),
+            weekendStyle: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFE53935)),
           ),
         ),
 

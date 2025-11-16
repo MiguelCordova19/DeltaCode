@@ -224,4 +224,19 @@ IMPORTANTE:
       return [];
     }
   }
+  
+  // Verificar conexión a internet
+  Future<void> verificarConexion() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://www.google.com'),
+      ).timeout(const Duration(seconds: 5));
+      
+      if (response.statusCode != 200) {
+        throw Exception('Sin conexión');
+      }
+    } catch (e) {
+      throw Exception('Sin conexión a internet');
+    }
+  }
 }

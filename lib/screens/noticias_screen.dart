@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../models/noticia.dart';
 import '../services/noticias_service.dart';
+import '../services/gamificacion_service.dart';
 
 class NoticiasScreen extends StatefulWidget {
   const NoticiasScreen({super.key});
@@ -12,16 +14,28 @@ class NoticiasScreen extends StatefulWidget {
 
 class _NoticiasScreenState extends State<NoticiasScreen> {
   final NoticiasService _noticiasService = NoticiasService();
+  final GamificacionService _gamificacionService = GamificacionService();
   List<Noticia> _noticias = [];
   List<Noticia> _noticiasFiltradas = [];
   bool _isLoading = true;
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
+  bool _primeraNoticiaLeida = false;
 
   @override
   void initState() {
     super.initState();
     _cargarNoticias();
+    _cargarEstadoLogro();
+  }
+  
+  Future<void> _cargarEstadoLogro() async {
+    final puntos = await _gamificacionService.obtenerPuntos();
+    if (mounted) {
+      setState(() {
+        _primeraNoticiaLeida = puntos.logros.any((l) => l.id == 'ciudadano_informado');
+      });
+    }
   }
 
   @override
@@ -75,6 +89,11 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
     try {
       final uri = Uri.parse(url);
       
+      // Otorgar logro si es la primera noticia
+      if (!_primeraNoticiaLeida) {
+        await _otorgarLogroPrimeraNoticia();
+      }
+      
       // Intentar abrir directamente sin verificar primero
       final launched = await launchUrl(
         uri,
@@ -107,6 +126,214 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
       }
     }
   }
+  
+  Future<void> _otorgarLogroPrimeraNoticia() async {
+    try {
+      await _gamificacionService.agregarPuntos(
+        puntos: GamificacionService.PUNTOS_LEER_NOTICIA,
+        descripcion: 'Leíste tu primera noticia electoral',
+        logroId: 'ciudadano_informado',
+        logroTitulo: '📰 Ciudadano Informado',
+        logroDescripcion: 'Lee tu primera noticia electoral',
+        logroIcono: '📰',
+      );
+      
+      setState(() {
+        _primeraNoticiaLeida = true;
+      });
+      
+      if (mounted) {
+        await _mostrarDialogoLogro(
+          icono: '📰',
+          titulo: '¡Logro desbloqueado!',
+          descripcion: 'Ciudadano Informado',
+          puntos: GamificacionService.PUNTOS_LEER_NOTICIA,
+        );
+      }
+    } catch (e) {
+      print('Error al otorgar logro: $e');
+    }
+  }
+  
+  Future<void> _abrirCanalWhatsApp() async {
+    const url = 'https://www.whatsapp.com/channel/0029Va43BaoDJ6GxDREkbp3k';
+    try {
+      final uri = Uri.parse(url);
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      
+      if (!launched && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text('No se pudo abrir el canal de WhatsApp'),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text('Error al abrir WhatsApp: $e'),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    }
+  }
+  
+  Future<void> _mostrarDialogoLogro({
+    required String icono,
+    required String titulo,
+    required String descripcion,
+    required int puntos,
+  }) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.indigo[400]!,
+                Colors.blue[400]!,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Ícono animado
+              TweenAnimationBuilder<double>(
+                duration: const Duration(milliseconds: 600),
+                tween: Tween(begin: 0.0, end: 1.0),
+                curve: Curves.elasticOut,
+                builder: (context, value, child) {
+                  return Transform.scale(
+                    scale: value,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          icono,
+                          style: const TextStyle(fontSize: 48),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              Text(
+                titulo,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                descripcion,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '+$puntos puntos',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.indigo[700],
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Aceptar',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
 
 
@@ -119,6 +346,16 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
         foregroundColor: Colors.white,
         title: const Text('Noticias Electorales'),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const FaIcon(
+              FontAwesomeIcons.whatsapp,
+              color: Colors.white,
+            ),
+            tooltip: 'Canal de WhatsApp',
+            onPressed: () => _abrirCanalWhatsApp(),
+          ),
+        ],
       ),
       body: Column(
         children: [

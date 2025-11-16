@@ -1,11 +1,11 @@
 import '../models/senador.dart';
 
 class SenadoresData {
-  static List<Senador> getPrecandidatos() {
+  static List<Senador> getPrecandidatosNacionales() {
     return [
       // ACCIÓN POPULAR
       Senador(
-        id: 'ap_s1',
+        id: 'ap_sn1',
         nombre: 'María Fernanda Quiroz',
         edad: 49,
         profesion: 'Abogada constitucionalista',
@@ -17,9 +17,10 @@ class SenadoresData {
         ],
         partido: 'Acción Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.nacional,
       ),
       Senador(
-        id: 'ap_s2',
+        id: 'ap_sn2',
         nombre: 'Luis Alberto Ramos',
         edad: 54,
         profesion: 'Economista',
@@ -31,9 +32,10 @@ class SenadoresData {
         ],
         partido: 'Acción Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.nacional,
       ),
       Senador(
-        id: 'ap_s3',
+        id: 'ap_sn3',
         nombre: 'Carolina Mendoza',
         edad: 42,
         profesion: 'Profesora universitaria',
@@ -45,11 +47,12 @@ class SenadoresData {
         ],
         partido: 'Acción Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.nacional,
       ),
 
       // FUERZA POPULAR
       Senador(
-        id: 'fp_s1',
+        id: 'fp_sn1',
         nombre: 'Gabriel Soto',
         edad: 50,
         profesion: 'Administrador',
@@ -61,9 +64,10 @@ class SenadoresData {
         ],
         partido: 'Fuerza Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.nacional,
       ),
       Senador(
-        id: 'fp_s2',
+        id: 'fp_sn2',
         nombre: 'Andrea Chacón',
         edad: 45,
         profesion: 'Ingeniera industrial',
@@ -75,9 +79,10 @@ class SenadoresData {
         ],
         partido: 'Fuerza Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.nacional,
       ),
       Senador(
-        id: 'fp_s3',
+        id: 'fp_sn3',
         nombre: 'Dario Gálvez',
         edad: 58,
         profesion: 'Abogado',
@@ -89,11 +94,12 @@ class SenadoresData {
         ],
         partido: 'Fuerza Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.nacional,
       ),
 
       // ALIANZA PARA EL PROGRESO
       Senador(
-        id: 'app_s1',
+        id: 'app_sn1',
         nombre: 'Silvia Benavides',
         edad: 47,
         profesion: 'Médica cirujana',
@@ -105,9 +111,10 @@ class SenadoresData {
         ],
         partido: 'Alianza para el Progreso',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.nacional,
       ),
       Senador(
-        id: 'app_s2',
+        id: 'app_sn2',
         nombre: 'Julio Pacheco',
         edad: 52,
         profesion: 'Empresario',
@@ -119,9 +126,10 @@ class SenadoresData {
         ],
         partido: 'Alianza para el Progreso',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.nacional,
       ),
       Senador(
-        id: 'app_s3',
+        id: 'app_sn3',
         nombre: 'Rosa Quispe',
         edad: 43,
         profesion: 'Socióloga',
@@ -133,143 +141,196 @@ class SenadoresData {
         ],
         partido: 'Alianza para el Progreso',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.nacional,
+      ),
+    ];
+  }
+
+  static List<Senador> getPrecandidatosRegionales() {
+    return [
+      // AMAZONAS
+      Senador(
+        id: 'amazonas_1',
+        nombre: 'Raúl Medina Tafur',
+        propuestas: ['Desarrollo regional', 'Infraestructura local'],
+        partido: 'Acción Popular',
+        estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Amazonas',
+      ),
+      Senador(
+        id: 'amazonas_2',
+        nombre: 'Lucía Torres Huamán',
+        propuestas: ['Educación rural', 'Salud comunitaria'],
+        partido: 'Fuerza Popular',
+        estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Amazonas',
+      ),
+      Senador(
+        id: 'amazonas_3',
+        nombre: 'Kevin Bravo Salaverry',
+        propuestas: ['Turismo sostenible', 'Agricultura familiar'],
+        partido: 'Alianza para el Progreso',
+        estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Amazonas',
       ),
 
-      // RENOVACIÓN POPULAR
+      // ÁNCASH
       Senador(
-        id: 'rp_s1',
-        nombre: 'Ricardo Morales',
-        edad: 55,
-        profesion: 'Empresario',
-        biografia: 'Defensor de la libre empresa y el mercado.',
-        propuestas: [
-          'Reducción del tamaño del Estado',
-          'Libertad económica',
-          'Simplificación tributaria',
-        ],
-        partido: 'Renovación Popular',
+        id: 'ancash_1',
+        nombre: 'Marcos Lázaro Castillo',
+        propuestas: ['Minería responsable', 'Desarrollo sostenible'],
+        partido: 'Acción Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Áncash',
       ),
       Senador(
-        id: 'rp_s2',
-        nombre: 'Patricia Vargas',
-        edad: 48,
-        profesion: 'Abogada',
-        biografia: 'Especialista en derecho empresarial.',
-        propuestas: [
-          'Seguridad jurídica para inversiones',
-          'Protección de la propiedad privada',
-          'Modernización del código civil',
-        ],
-        partido: 'Renovación Popular',
+        id: 'ancash_2',
+        nombre: 'Yesenia Huerta Silva',
+        propuestas: ['Protección ambiental', 'Turismo de aventura'],
+        partido: 'Fuerza Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Áncash',
       ),
       Senador(
-        id: 'rp_s3',
-        nombre: 'Fernando Castro',
-        edad: 51,
-        profesion: 'Ingeniero',
-        biografia: 'Experto en infraestructura y desarrollo urbano.',
-        propuestas: [
-          'Desarrollo de ciudades inteligentes',
-          'Inversión privada en infraestructura',
-          'Modernización del transporte público',
-        ],
-        partido: 'Renovación Popular',
+        id: 'ancash_3',
+        nombre: 'Diego Cervantes Rivas',
+        propuestas: ['Infraestructura vial', 'Conectividad regional'],
+        partido: 'Alianza para el Progreso',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Áncash',
       ),
 
-      // PARTIDO MORADO
+      // APURÍMAC
       Senador(
-        id: 'pm_s1',
-        nombre: 'Daniela Torres',
-        edad: 44,
-        profesion: 'Politóloga',
-        biografia: 'Activista por la reforma política y la transparencia.',
-        propuestas: [
-          'Reforma del sistema electoral',
-          'Transparencia en el financiamiento político',
-          'Participación ciudadana efectiva',
-        ],
-        partido: 'Partido Morado',
+        id: 'apurimac_1',
+        nombre: 'Leandro Ccorahua Mita',
+        propuestas: ['Agricultura andina', 'Desarrollo rural'],
+        partido: 'Acción Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Apurímac',
       ),
       Senador(
-        id: 'pm_s2',
-        nombre: 'Miguel Ángel Ruiz',
-        edad: 46,
-        profesion: 'Ingeniero de sistemas',
-        biografia: 'Promotor de la transformación digital del Estado.',
-        propuestas: [
-          'Gobierno digital',
-          'Modernización tecnológica del Estado',
-          'Ciberseguridad nacional',
-        ],
-        partido: 'Partido Morado',
+        id: 'apurimac_2',
+        nombre: 'Brenda Cotrina Huayta',
+        propuestas: ['Educación bilingüe', 'Cultura ancestral'],
+        partido: 'Fuerza Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Apurímac',
       ),
       Senador(
-        id: 'pm_s3',
-        nombre: 'Lucía Fernández',
-        edad: 41,
-        profesion: 'Economista',
-        biografia: 'Especialista en políticas públicas y desarrollo social.',
-        propuestas: [
-          'Reducción de la desigualdad',
-          'Programas sociales eficientes',
-          'Desarrollo económico inclusivo',
-        ],
-        partido: 'Partido Morado',
+        id: 'apurimac_3',
+        nombre: 'Paul Huamán Quispe',
+        propuestas: ['Ganadería sostenible', 'Acceso a mercados'],
+        partido: 'Alianza para el Progreso',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Apurímac',
       ),
 
-      // AVANZA PAÍS
+      // AREQUIPA
       Senador(
-        id: 'avp_s1',
-        nombre: 'Jorge Ramírez',
-        edad: 53,
-        profesion: 'Economista',
-        biografia: 'Experto en políticas económicas liberales.',
-        propuestas: [
-          'Apertura comercial',
-          'Reducción de barreras burocráticas',
-          'Fomento de la competitividad',
-        ],
-        partido: 'Avanza País – Partido de Integración Social',
+        id: 'arequipa_1',
+        nombre: 'Mauricio Ibáñez Salcedo',
+        propuestas: ['Desarrollo industrial', 'Innovación tecnológica'],
+        partido: 'Acción Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Arequipa',
       ),
       Senador(
-        id: 'avp_s2',
-        nombre: 'Elena Gutiérrez',
-        edad: 47,
-        profesion: 'Abogada',
-        biografia: 'Defensora de los derechos de propiedad.',
-        propuestas: [
-          'Formalización de la propiedad',
-          'Acceso al crédito',
-          'Seguridad jurídica',
-        ],
-        partido: 'Avanza País – Partido de Integración Social',
+        id: 'arequipa_2',
+        nombre: 'Cindy Flores Barreda',
+        propuestas: ['Emprendimiento juvenil', 'Educación superior'],
+        partido: 'Fuerza Popular',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Arequipa',
       ),
       Senador(
-        id: 'avp_s3',
-        nombre: 'Carlos Mendoza',
-        edad: 50,
-        profesion: 'Empresario',
-        biografia: 'Promotor del emprendimiento y la innovación.',
-        propuestas: [
-          'Apoyo a startups',
-          'Incentivos a la innovación',
-          'Desarrollo del ecosistema emprendedor',
-        ],
-        partido: 'Avanza País – Partido de Integración Social',
+        id: 'arequipa_3',
+        nombre: 'Frank Zúñiga Núñez',
+        propuestas: ['Turismo cultural', 'Patrimonio histórico'],
+        partido: 'Alianza para el Progreso',
         estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Arequipa',
+      ),
+
+      // AYACUCHO
+      Senador(
+        id: 'ayacucho_1',
+        nombre: 'Julián Huayllasco Cárdenas',
+        propuestas: ['Paz y reconciliación', 'Desarrollo comunitario'],
+        partido: 'Acción Popular',
+        estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Ayacucho',
+      ),
+      Senador(
+        id: 'ayacucho_2',
+        nombre: 'Rosa Poma Flores',
+        propuestas: ['Artesanía local', 'Comercio justo'],
+        partido: 'Fuerza Popular',
+        estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Ayacucho',
+      ),
+      Senador(
+        id: 'ayacucho_3',
+        nombre: 'Diego Gutiérrez Álvarez',
+        propuestas: ['Agricultura familiar', 'Seguridad alimentaria'],
+        partido: 'Alianza para el Progreso',
+        estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Ayacucho',
+      ),
+
+      // LIMA METROPOLITANA
+      Senador(
+        id: 'lima_1',
+        nombre: 'Sebastián Torres Maldonado',
+        propuestas: ['Transporte público', 'Movilidad urbana'],
+        partido: 'Acción Popular',
+        estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Lima Metropolitana',
+      ),
+      Senador(
+        id: 'lima_2',
+        nombre: 'Patricia Díaz Ramos',
+        propuestas: ['Seguridad ciudadana', 'Espacios públicos'],
+        partido: 'Fuerza Popular',
+        estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Lima Metropolitana',
+      ),
+      Senador(
+        id: 'lima_3',
+        nombre: 'Eduardo Sánchez Villa',
+        propuestas: ['Desarrollo urbano', 'Vivienda social'],
+        partido: 'Alianza para el Progreso',
+        estado: EstadoSenador.precandidato,
+        tipo: TipoSenador.regional,
+        region: 'Lima Metropolitana',
       ),
     ];
   }
 
   static List<Senador> getCandidatosOficiales() {
     return [];
+  }
+
+  // Obtener todas las regiones únicas
+  static List<String> getRegiones() {
+    final regionales = getPrecandidatosRegionales();
+    return regionales.map((s) => s.region!).toSet().toList()..sort();
   }
 }

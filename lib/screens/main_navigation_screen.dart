@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen_content.dart';
 import 'chat_list_screen.dart';
-import 'candidatos_main_screen.dart';
+import 'candidatos_unificado_screen.dart';
 import 'calendario_electoral_screen.dart';
 import 'curiosidades_screen.dart';
 import 'perfil_screen.dart';
@@ -23,7 +24,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
   final List<Widget> _screens = [
     const HomeScreenContent(),
     const ChatListScreen(),
-    const CandidatosMainScreen(),
+    const CandidatosUnificadoScreen(),
     const CalendarioElectoralScreen(),
     const CuriosidadesScreen(),
     const PerfilScreen(),
@@ -83,12 +84,123 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Ticker
         });
         // Animar entrada de nueva página
         _pageTransitionController.forward();
+        
+        // Si el usuario navega a curiosidades (índice 4), mostrar tutorial
+        if (index == 4) {
+          _mostrarTutorialCuriosidades();
+        }
       });
       
       // Animar iconos
       _controllers[_selectedIndex].reverse();
       _controllers[index].forward();
     }
+  }
+  
+  Future<void> _mostrarTutorialCuriosidades() async {
+    // Esperar a que la animación termine
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    // Obtener el widget de curiosidades y llamar su método
+    if (_screens[4] is CuriosidadesScreen) {
+      // Verificar si ya se mostró el tutorial
+      final prefs = await SharedPreferences.getInstance();
+      final tutorialMostrado = prefs.getBool('tutorial_curiosidades_mostrado') ?? false;
+      
+      if (!tutorialMostrado && mounted) {
+        // Marcar como mostrado
+        await prefs.setBool('tutorial_curiosidades_mostrado', true);
+        
+        // Mostrar el tutorial
+        if (mounted) {
+          _mostrarDialogoTutorial();
+        }
+      }
+    }
+  }
+  
+  void _mostrarDialogoTutorial() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '👋',
+                style: TextStyle(fontSize: 48),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                '¡Bienvenido!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Toca los círculos de los años para descubrir la historia de cada presidente.',
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.amber[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.amber[300]!, width: 2),
+                ),
+                child: Row(
+                  children: [
+                    const Text('🪙', style: TextStyle(fontSize: 32)),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Text(
+                        '+10 monedas\npor cada historia',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE53935),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  '¡Entendido!',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override

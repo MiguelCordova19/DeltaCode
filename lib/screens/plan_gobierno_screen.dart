@@ -4,6 +4,7 @@ import '../models/partido_politico.dart';
 import '../models/plan_gobierno.dart';
 import '../models/tts_config.dart';
 import '../services/tts_service_advanced.dart';
+import '../services/gamificacion_service.dart';
 import '../widgets/tts_config_dialog.dart';
 
 class PlanGobiernoScreen extends StatefulWidget {
@@ -28,6 +29,10 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
 
   bool get _isReading => _ttsService.isPlaying;
   bool get _isPaused => _ttsService.isPaused;
+  
+  // Gamificación
+  final GamificacionService _gamificacionService = GamificacionService();
+  bool _primerPlanLeido = false;
 
   @override
   void initState() {
@@ -50,6 +55,16 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
     };
     
     _searchController.addListener(_filterPartidos);
+    _cargarEstadoLogro();
+  }
+  
+  Future<void> _cargarEstadoLogro() async {
+    final puntos = await _gamificacionService.obtenerPuntos();
+    if (mounted) {
+      setState(() {
+        _primerPlanLeido = puntos.logros.any((l) => l.id == 'primer_plan_leido');
+      });
+    }
   }
 
   @override
@@ -72,6 +87,162 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
         }).toList();
       }
     });
+  }
+  
+  Future<void> _otorgarLogroPrimerPlan() async {
+    try {
+      await _gamificacionService.agregarPuntos(
+        puntos: GamificacionService.PUNTOS_LEER_PLAN,
+        descripcion: 'Leíste tu primer plan de gobierno',
+        logroId: 'primer_plan_leido',
+        logroTitulo: '📖 Primer Plan Leído',
+        logroDescripcion: 'Lee tu primer plan de gobierno completo',
+        logroIcono: '📖',
+      );
+      
+      setState(() {
+        _primerPlanLeido = true;
+      });
+      
+      // Mostrar diálogo de logro y esperar a que se cierre
+      if (mounted) {
+        await _mostrarDialogoLogro(
+          icono: '📖',
+          titulo: '¡Logro desbloqueado!',
+          descripcion: 'Primer Plan Leído',
+          puntos: GamificacionService.PUNTOS_LEER_PLAN,
+        );
+      }
+    } catch (e) {
+      print('Error al otorgar logro: $e');
+    }
+  }
+  
+  Future<void> _mostrarDialogoLogro({
+    required String icono,
+    required String titulo,
+    required String descripcion,
+    required int puntos,
+  }) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.green[400]!,
+                Colors.teal[400]!,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Ícono animado
+              TweenAnimationBuilder<double>(
+                duration: const Duration(milliseconds: 600),
+                tween: Tween(begin: 0.0, end: 1.0),
+                curve: Curves.elasticOut,
+                builder: (context, value, child) {
+                  return Transform.scale(
+                    scale: value,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          icono,
+                          style: const TextStyle(fontSize: 48),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              Text(
+                titulo,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                descripcion,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '+$puntos puntos',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.teal[700],
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Aceptar',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void _showConfigDialog() {
@@ -137,8 +308,14 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
               elevation: 0,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () {
+                onPressed: () async {
                   _ttsService.stop();
+                  
+                  // Otorgar logro si es la primera vez
+                  if (!_primerPlanLeido) {
+                    await _otorgarLogroPrimerPlan();
+                  }
+                  
                   setState(() {
                     _selectedPartido = null;
                   });
@@ -387,14 +564,8 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
                     ],
                   ),
                 )
-              : GridView.builder(
+              : ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 0.75,
-                  ),
                   itemCount: _filteredPartidos.length,
                   itemBuilder: (context, index) {
                     return _buildPartidoCard(_filteredPartidos[index]);
@@ -442,126 +613,113 @@ class _PlanGobiernoScreenState extends State<PlanGobiernoScreen> {
       }
     }
     
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            _selectedPartido = partido;
-            _planGobierno = plan ?? PlanGobierno.getDefaultPlan(partido.id, partido.nombre);
-            _categories = _planGobierno!.getCategorias();
-            _selectedCategoryIndex = 0;
-          });
-        },
-        borderRadius: BorderRadius.circular(20),
-        splashColor: const Color(0xFFD32F2F).withOpacity(0.3),
-        highlightColor: const Color(0xFFD32F2F).withOpacity(0.2),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: const Color(0xFFD32F2F).withOpacity(0.3),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFD32F2F).withOpacity(0.15),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            setState(() {
+              _selectedPartido = partido;
+              _planGobierno = plan ?? PlanGobierno.getDefaultPlan(partido.id, partido.nombre);
+              _categories = _planGobierno!.getCategorias();
+              _selectedCategoryIndex = 0;
+            });
+          },
+          borderRadius: BorderRadius.circular(16),
+          splashColor: const Color(0xFFD32F2F).withOpacity(0.3),
+          highlightColor: const Color(0xFFD32F2F).withOpacity(0.2),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: const Color(0xFFD32F2F).withOpacity(0.3),
+                width: 1,
               ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Logo del partido - Ocupa la mitad superior
-              Expanded(
-                flex: 3,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFD32F2F).withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  // Logo del partido
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.grey[200]!,
+                        width: 1,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: _buildPartidoImage(partido.logoPath),
+                  ),
+                  
+                  const SizedBox(width: 16),
+                  
+                  // Información del partido
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          partido.nombre,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF2D2D2D),
+                            height: 1.2,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(
+                              estadoIcono,
+                              size: 14,
+                              color: estadoColor,
+                            ),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                estadoTexto,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: estadoColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  padding: const EdgeInsets.all(20),
-                  child: _buildPartidoImage(partido.logoPath),
-                ),
-              ),
-              
-              // Información del partido
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Nombre del partido
-                      Text(
-                        partido.nombre,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2D2D2D),
-                          height: 1.2,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      
-                      // Estado del plan
-                      Row(
-                        children: [
-                          Icon(
-                            estadoIcono,
-                            size: 12,
-                            color: estadoColor,
-                          ),
-                          const SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              estadoTexto,
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: estadoColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  
+                  const SizedBox(width: 12),
+                  
+                  // Flecha
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Color(0xFFD32F2F),
+                    size: 20,
                   ),
-                ),
+                ],
               ),
-              
-              // Botón "Ver Plan"
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFD32F2F), // Rojo
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                ),
-                child: const Text(
-                  'Ver Plan',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

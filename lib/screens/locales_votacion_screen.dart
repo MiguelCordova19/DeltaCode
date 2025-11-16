@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/local_votacion.dart';
 import '../services/locales_votacion_service.dart';
+import '../services/gamificacion_service.dart';
 import 'mapa_local_screen.dart';
 
 class LocalesVotacionScreen extends StatefulWidget {
@@ -13,22 +14,188 @@ class LocalesVotacionScreen extends StatefulWidget {
 
 class _LocalesVotacionScreenState extends State<LocalesVotacionScreen> {
   final LocalesVotacionService _service = LocalesVotacionService();
+  final GamificacionService _gamificacionService = GamificacionService();
   List<LocalVotacion> _locales = [];
   List<LocalVotacion> _localesFiltrados = [];
   bool _isLoading = true;
   String _filtroDistrito = 'Todos';
   final TextEditingController _searchController = TextEditingController();
+  bool _ubicacionEncontrada = false;
 
   @override
   void initState() {
     super.initState();
     _cargarLocales();
+    _cargarEstadoLogro();
+  }
+  
+  Future<void> _cargarEstadoLogro() async {
+    final puntos = await _gamificacionService.obtenerPuntos();
+    if (mounted) {
+      setState(() {
+        _ubicacionEncontrada = puntos.logros.any((l) => l.id == 'ubicacion_encontrada');
+      });
+    }
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+  
+  Future<void> _otorgarLogroUbicacion() async {
+    try {
+      await _gamificacionService.agregarPuntos(
+        puntos: 30,
+        descripcion: 'Encontraste tu local de votación',
+        logroId: 'ubicacion_encontrada',
+        logroTitulo: '📍 Ubicación Encontrada',
+        logroDescripcion: 'Encuentra tu local de votación',
+        logroIcono: '📍',
+      );
+      
+      setState(() {
+        _ubicacionEncontrada = true;
+      });
+      
+      if (mounted) {
+        await _mostrarDialogoLogro(
+          icono: '📍',
+          titulo: '¡Logro desbloqueado!',
+          descripcion: 'Ubicación Encontrada',
+          puntos: 30,
+        );
+      }
+    } catch (e) {
+      print('Error al otorgar logro: $e');
+    }
+  }
+  
+  Future<void> _mostrarDialogoLogro({
+    required String icono,
+    required String titulo,
+    required String descripcion,
+    required int puntos,
+  }) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.red[400]!,
+                Colors.pink[400]!,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TweenAnimationBuilder<double>(
+                duration: const Duration(milliseconds: 600),
+                tween: Tween(begin: 0.0, end: 1.0),
+                curve: Curves.elasticOut,
+                builder: (context, value, child) {
+                  return Transform.scale(
+                    scale: value,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          icono,
+                          style: const TextStyle(fontSize: 48),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              Text(
+                titulo,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                descripcion,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '+$puntos puntos',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.red[700],
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Aceptar',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _cargarLocales() async {
@@ -119,7 +286,12 @@ class _LocalesVotacionScreenState extends State<LocalesVotacionScreen> {
     }
   }
 
-  void _mostrarOpcionesMapa(LocalVotacion local) {
+  void _mostrarOpcionesMapa(LocalVotacion local) async {
+    // Otorgar logro si es la primera vez
+    if (!_ubicacionEncontrada) {
+      await _otorgarLogroUbicacion();
+    }
+    
     // Si tiene embedUrl, ir directo a la pantalla del mapa
     if (local.embedUrl != null && local.embedUrl!.isNotEmpty) {
       Navigator.push(
@@ -304,14 +476,14 @@ class _LocalesVotacionScreenState extends State<LocalesVotacionScreen> {
                                     _filtrarLocales();
                                   });
                                 },
-                                backgroundColor: Colors.white.withOpacity(0.2),
+                                backgroundColor: Colors.white.withOpacity(0.9),
                                 selectedColor: Colors.white,
                                 labelStyle: TextStyle(
-                                  color: isSelected ? const Color(0xFFE53935) : Colors.white,
+                                  color: isSelected ? const Color(0xFFE53935) : const Color(0xFF666666),
                                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                                 ),
                                 side: BorderSide(
-                                  color: isSelected ? Colors.white : Colors.white.withOpacity(0.5),
+                                  color: isSelected ? const Color(0xFFE53935) : Colors.white.withOpacity(0.8),
                                   width: isSelected ? 2 : 1,
                                 ),
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

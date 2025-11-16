@@ -156,6 +156,39 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
     final texto = _messageController.text.trim();
     if (texto.isEmpty) return;
 
+    // Verificar conexión a internet antes de enviar
+    try {
+      // Intentar una petición simple para verificar conexión
+      await _geminiService.verificarConexion();
+    } catch (e) {
+      // Sin conexión
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.wifi_off, color: Colors.red[700]),
+                const SizedBox(width: 12),
+                const Text('Sin conexión'),
+              ],
+            ),
+            content: const Text(
+              'No tienes conexión a internet. Por favor, verifica tu conexión e intenta nuevamente.\n\n'
+              'Puedes ver el historial de conversaciones anteriores mientras tanto.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Entendido'),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
+
     // Agregar mensaje del usuario
     final mensajeUsuario = MensajeChat(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -351,9 +384,15 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () async {
+        // Retornar true para indicar que se guardó la conversación
+        Navigator.pop(context, true);
+        return false; // Prevenir el pop automático
+      },
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppBar(
         backgroundColor: const Color(0xFFE53935),
         foregroundColor: Colors.white,
         title: Column(
@@ -489,6 +528,7 @@ class _ChatElectoralScreenState extends State<ChatElectoralScreen> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -26,14 +26,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _selectDate() async {
+    // Obtener la fecha actual normalizada (sin hora)
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365)),
+      initialDate: DateTime(now.year - 1, now.month, now.day),
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
-      helpText: 'Selecciona la fecha de emisión',
+      lastDate: today, // Usar fecha normalizada
+      helpText: 'Selecciona la fecha de emisión del DNI',
       cancelText: 'Cancelar',
       confirmText: 'Aceptar',
+      fieldLabelText: 'Fecha de emisión',
+      errorFormatText: 'Formato de fecha inválido',
+      errorInvalidText: 'Fecha fuera del rango permitido',
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -49,6 +56,14 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (picked != null) {
+      // Validar nuevamente que no sea futura
+      if (picked.isAfter(today)) {
+        setState(() {
+          _errorMessage = 'La fecha de emisión no puede ser futura';
+        });
+        return;
+      }
+      
       setState(() {
         _fechaEmision = picked;
         _errorMessage = null;
@@ -64,6 +79,22 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_fechaEmision == null) {
       setState(() {
         _errorMessage = 'Por favor selecciona la fecha de emisión del DNI';
+      });
+      return;
+    }
+
+    // Validar que la fecha de emisión no sea futura
+    if (_fechaEmision!.isAfter(DateTime.now())) {
+      setState(() {
+        _errorMessage = 'La fecha de emisión no puede ser futura';
+      });
+      return;
+    }
+
+    // Validar que la fecha de emisión no sea muy antigua (antes del año 2000)
+    if (_fechaEmision!.isBefore(DateTime(2000))) {
+      setState(() {
+        _errorMessage = 'La fecha de emisión no puede ser anterior al año 2000';
       });
       return;
     }

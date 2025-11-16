@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../models/paso_tutorial.dart';
+import '../services/gamificacion_service.dart';
 
 class TutorialMiembroMesaScreen extends StatefulWidget {
   const TutorialMiembroMesaScreen({super.key});
@@ -17,12 +18,24 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
   late FlutterTts _flutterTts;
   bool _mostrarVideo = true;
   bool _isReading = false;
+  final GamificacionService _gamificacionService = GamificacionService();
+  bool _tutorialCompletado = false;
 
   @override
   void initState() {
     super.initState();
     _initializeYoutubePlayer();
     _initializeTts();
+    _cargarEstadoLogro();
+  }
+  
+  Future<void> _cargarEstadoLogro() async {
+    final puntos = await _gamificacionService.obtenerPuntos();
+    if (mounted) {
+      setState(() {
+        _tutorialCompletado = puntos.logros.any((l) => l.id == 'miembro_mesa_preparado');
+      });
+    }
   }
 
   void _initializeYoutubePlayer() {
@@ -636,25 +649,174 @@ class _TutorialMiembroMesaScreenState extends State<TutorialMiembroMesaScreen> {
     });
   }
 
-  void _finalizarTutorial() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('¡Tutorial Completado! 🎉'),
-        content: const Text(
-          '¡Felicitaciones! Ahora conoces todos los pasos para ser un excelente miembro de mesa.\n\n'
-          'Recuerda: Tu participación es fundamental para la democracia.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text('Entendido'),
+  Future<void> _finalizarTutorial() async {
+    // Otorgar logro si es la primera vez
+    if (!_tutorialCompletado) {
+      await _otorgarLogroMiembroMesa();
+    } else {
+      // Mostrar diálogo normal
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('¡Tutorial Completado! 🎉'),
+          content: const Text(
+            '¡Felicitaciones! Ahora conoces todos los pasos para ser un excelente miembro de mesa.\n\n'
+            'Recuerda: Tu participación es fundamental para la democracia.',
           ),
-        ],
-      ),
-    );
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              child: const Text('Entendido'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+  
+  Future<void> _otorgarLogroMiembroMesa() async {
+    try {
+      await _gamificacionService.agregarPuntos(
+        puntos: 75,
+        descripcion: 'Completaste el tutorial de miembro de mesa',
+        logroId: 'miembro_mesa_preparado',
+        logroTitulo: '🗳️ Miembro de Mesa Preparado',
+        logroDescripcion: 'Completa el tutorial de miembro de mesa',
+        logroIcono: '🗳️',
+      );
+      
+      setState(() {
+        _tutorialCompletado = true;
+      });
+      
+      if (mounted) {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            child: Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.amber[600]!,
+                    Colors.orange[600]!,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TweenAnimationBuilder<double>(
+                    duration: const Duration(milliseconds: 600),
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    curve: Curves.elasticOut,
+                    builder: (context, value, child) {
+                      return Transform.scale(
+                        scale: value,
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '🗳️',
+                              style: TextStyle(fontSize: 48),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    '¡Logro desbloqueado!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Miembro de Mesa Preparado',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      '+75 puntos',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.orange[700],
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      'Aceptar',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error al otorgar logro: $e');
+    }
   }
 }
